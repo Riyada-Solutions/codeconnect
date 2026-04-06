@@ -13,48 +13,47 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
 import { mockUser } from "@/constants/mockData";
+import { lightTheme, darkTheme } from "@/constants/theme";
+import { useApp } from "@/contexts/AppContext";
 
 interface MenuRowProps {
   icon: string;
+  iconColor?: string;
+  iconBg?: string;
   label: string;
-  value?: string;
   onPress?: () => void;
-  danger?: boolean;
+  colors: typeof lightTheme;
 }
 
-function MenuRow({ icon, label, value, onPress, danger }: MenuRowProps) {
+function MenuRow({ icon, iconColor, iconBg, label, onPress, colors }: MenuRowProps) {
   return (
-    <Pressable style={styles.menuRow} onPress={onPress}>
-      <View style={[styles.menuIcon, danger && styles.menuIconDanger]}>
-        <Feather name={icon as any} size={16} color={danger ? "#ef4444" : "#2daaae"} />
+    <Pressable
+      style={[styles.menuRow, { borderBottomColor: colors.border }]}
+      onPress={onPress}
+    >
+      <View style={[styles.menuIcon, { backgroundColor: iconBg || colors.primaryLight }]}>
+        <Feather name={icon as any} size={18} color={iconColor || colors.primary} />
       </View>
-      <View style={styles.menuInfo}>
-        <Text style={[styles.menuLabel, danger && styles.dangerText]}>{label}</Text>
-        {value ? <Text style={styles.menuValue}>{value}</Text> : null}
-      </View>
-      {!danger && <Feather name="chevron-right" size={16} color="#93b5b6" />}
+      <Text style={[styles.menuLabel, { color: colors.text }]}>{label}</Text>
+      <Feather name="chevron-right" size={16} color={colors.textMuted} />
     </Pressable>
   );
 }
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { t, isDark } = useApp();
+  const colors = isDark ? darkTheme : lightTheme;
 
   const handleLogout = () => {
     router.replace("/(auth)/login");
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.hero, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.hero, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <View style={styles.decorCircle1} />
         <View style={styles.decorCircle2} />
-        <View style={styles.heroHeader}>
-          <Text style={styles.heroTitle}>My profile</Text>
-          <Pressable style={styles.editBtn} onPress={() => router.push("/edit-profile")}>
-            <Feather name="edit-2" size={16} color="#ffffff" />
-          </Pressable>
-        </View>
         <View style={styles.heroCenter}>
           <Avatar
             initials={mockUser.initials}
@@ -77,28 +76,79 @@ export default function ProfileScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: Platform.OS === "web" ? 34 + 84 : insets.bottom + 90 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.card}>
-          <MenuRow icon="mail" label="Email" value={mockUser.email} />
-          <MenuRow icon="phone" label="Phone" value={mockUser.phone} />
-          <MenuRow icon="briefcase" label="Department" value={mockUser.department} />
-          <MenuRow icon="hash" label="Employee ID" value={mockUser.employeeId} />
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <MenuRow
+            icon="user"
+            iconColor="#2daaae"
+            iconBg="#e4f7f7"
+            label={t("profile.editProfile")}
+            onPress={() => router.push("/edit-profile")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="settings"
+            iconColor="#6366f1"
+            iconBg="#eef2ff"
+            label={t("profile.settings")}
+            onPress={() => router.push("/settings")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="lock"
+            iconColor="#f59e0b"
+            iconBg="#fffbeb"
+            label={t("profile.changePassword")}
+            onPress={() => router.push("/change-password")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="bell"
+            iconColor="#ef4444"
+            iconBg="#fef2f2"
+            label={t("profile.notifications")}
+            onPress={() => router.push("/notifications")}
+            colors={colors}
+          />
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>SETTINGS</Text>
-          </View>
-          <MenuRow icon="bell" label="Notifications" onPress={() => router.push("/notifications")} />
-          <MenuRow icon="moon" label="Appearance" onPress={() => router.push("/settings")} />
-          <MenuRow icon="shield" label="Privacy & Security" onPress={() => router.push("/privacy")} />
-          <MenuRow icon="help-circle" label="Help & Support" onPress={() => router.push("/settings")} />
-          <MenuRow icon="file-text" label="Terms of Service" onPress={() => router.push("/terms")} />
-          <MenuRow icon="info" label="About" onPress={() => router.push("/about")} />
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <MenuRow
+            icon="info"
+            iconColor="#3b82f6"
+            iconBg="#eff6ff"
+            label={t("profile.about")}
+            onPress={() => router.push("/about")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="file-text"
+            iconColor="#10b981"
+            iconBg="#ecfdf5"
+            label={t("profile.terms")}
+            onPress={() => router.push("/terms")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="shield"
+            iconColor="#8b5cf6"
+            iconBg="#f5f3ff"
+            label={t("profile.privacy")}
+            onPress={() => router.push("/privacy")}
+            colors={colors}
+          />
+          <MenuRow
+            icon="help-circle"
+            iconColor="#2daaae"
+            iconBg="#e4f7f7"
+            label={t("profile.helpSupport")}
+            onPress={() => router.push("/help-support")}
+            colors={colors}
+          />
         </View>
 
-        <Pressable style={styles.logoutBtn} onPress={handleLogout}>
+        <Pressable style={[styles.logoutBtn, { backgroundColor: colors.card, borderColor: "#fecaca" }]} onPress={handleLogout}>
           <Feather name="log-out" size={18} color="#ef4444" />
-          <Text style={styles.logoutText}>Log out</Text>
+          <Text style={styles.logoutText}>{t("profile.logout")}</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -108,10 +158,8 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   hero: {
-    backgroundColor: "#2daaae",
     paddingBottom: 40,
     overflow: "hidden",
   },
@@ -133,39 +181,20 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "rgba(255,255,255,0.05)",
   },
-  heroHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  heroTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_500Medium",
-    color: "#ffffff",
-  },
-  editBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   heroCenter: {
     alignItems: "center",
     gap: 6,
+    paddingTop: 8,
   },
   heroName: {
-    fontSize: 16,
-    fontFamily: "Inter_500Medium",
+    fontSize: 18,
+    fontFamily: "Inter_600SemiBold",
     color: "#ffffff",
-    marginTop: 8,
+    marginTop: 10,
   },
   heroRole: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.6)",
+    color: "rgba(255,255,255,0.7)",
     fontFamily: "Inter_400Regular",
   },
   hospitalBadge: {
@@ -186,71 +215,40 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 14,
-    gap: 12,
+    gap: 14,
   },
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: "hidden",
-  },
-  sectionHeader: {
-    backgroundColor: "#e4f7f7",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  sectionLabel: {
-    fontSize: 10,
-    fontFamily: "Inter_500Medium",
-    color: "#2daaae",
-    letterSpacing: 0.5,
   },
   menuRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
-    height: 52,
+    paddingHorizontal: 16,
+    height: 58,
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.08)",
-    gap: 12,
+    gap: 14,
   },
   menuIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
-    backgroundColor: "#e4f7f7",
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  menuIconDanger: {
-    backgroundColor: "#fef2f2",
-  },
-  menuInfo: {
-    flex: 1,
-  },
   menuLabel: {
-    fontSize: 13,
+    flex: 1,
+    fontSize: 14,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
-  },
-  menuValue: {
-    fontSize: 11,
-    color: "#93b5b6",
-    fontFamily: "Inter_400Regular",
-  },
-  dangerText: {
-    color: "#ef4444",
   },
   logoutBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    height: 48,
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
+    height: 50,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#fecaca",
-    marginTop: 4,
   },
   logoutText: {
     fontSize: 14,

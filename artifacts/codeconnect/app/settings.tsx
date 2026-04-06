@@ -12,21 +12,25 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { lightTheme, darkTheme } from "@/constants/theme";
+import { useApp } from "@/contexts/AppContext";
+
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const [darkMode, setDarkMode] = useState(false);
+  const { t, isDark, toggleTheme, language, setLanguage } = useApp();
+  const colors = isDark ? darkTheme : lightTheme;
   const [pushNotif, setPushNotif] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibration, setVibration] = useState(true);
   const [autoResponse, setAutoResponse] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#ffffff" />
+          <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={styles.headerTitle}>Settings</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("settings.title")}</Text>
         <View style={{ width: 32 }} />
       </View>
 
@@ -34,33 +38,63 @@ export default function SettingsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>APPEARANCE</Text>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View style={[styles.sectionHeader, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.sectionLabel}>{t("settings.appearance").toUpperCase()}</Text>
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="moon" size={16} color="#2daaae" />
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="moon" size={16} color={colors.primary} />
             </View>
-            <Text style={styles.settingText}>Dark Mode</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.darkMode")}</Text>
             <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
+              value={isDark}
+              onValueChange={toggleTheme}
               trackColor={{ false: "#e0e0e0", true: "#2daaae" }}
               thumbColor="#ffffff"
             />
           </View>
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>NOTIFICATIONS</Text>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View style={[styles.sectionHeader, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.sectionLabel}>{t("settings.language").toUpperCase()}</Text>
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="bell" size={16} color="#2daaae" />
+          <Pressable
+            style={[styles.langRow, { borderBottomColor: colors.border }]}
+            onPress={() => setLanguage("en")}
+          >
+            <View style={[styles.settingIcon, { backgroundColor: "#eff6ff" }]}>
+              <Text style={styles.langFlag}>EN</Text>
             </View>
-            <Text style={styles.settingText}>Push Notifications</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.english")}</Text>
+            <View style={[styles.radio, language === "en" && styles.radioActive]}>
+              {language === "en" && <View style={styles.radioInner} />}
+            </View>
+          </Pressable>
+          <Pressable
+            style={[styles.langRow, { borderBottomColor: colors.border }]}
+            onPress={() => setLanguage("ar")}
+          >
+            <View style={[styles.settingIcon, { backgroundColor: "#ecfdf5" }]}>
+              <Text style={styles.langFlag}>AR</Text>
+            </View>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.arabic")}</Text>
+            <View style={[styles.radio, language === "ar" && styles.radioActive]}>
+              {language === "ar" && <View style={styles.radioInner} />}
+            </View>
+          </Pressable>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View style={[styles.sectionHeader, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.sectionLabel}>{t("settings.notifications").toUpperCase()}</Text>
+          </View>
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="bell" size={16} color={colors.primary} />
+            </View>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.pushNotifications")}</Text>
             <Switch
               value={pushNotif}
               onValueChange={setPushNotif}
@@ -68,11 +102,11 @@ export default function SettingsScreen() {
               thumbColor="#ffffff"
             />
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="volume-2" size={16} color="#2daaae" />
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="volume-2" size={16} color={colors.primary} />
             </View>
-            <Text style={styles.settingText}>Sound</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.sound")}</Text>
             <Switch
               value={soundEnabled}
               onValueChange={setSoundEnabled}
@@ -80,11 +114,11 @@ export default function SettingsScreen() {
               thumbColor="#ffffff"
             />
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="smartphone" size={16} color="#2daaae" />
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="smartphone" size={16} color={colors.primary} />
             </View>
-            <Text style={styles.settingText}>Vibration</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.vibration")}</Text>
             <Switch
               value={vibration}
               onValueChange={setVibration}
@@ -94,15 +128,15 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>EMERGENCY</Text>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View style={[styles.sectionHeader, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.sectionLabel}>{t("settings.emergency").toUpperCase()}</Text>
           </View>
-          <View style={styles.settingRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="zap" size={16} color="#2daaae" />
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="zap" size={16} color={colors.primary} />
             </View>
-            <Text style={styles.settingText}>Auto-Response</Text>
+            <Text style={[styles.settingText, { color: colors.text }]}>{t("settings.autoResponse")}</Text>
             <Switch
               value={autoResponse}
               onValueChange={setAutoResponse}
@@ -110,33 +144,6 @@ export default function SettingsScreen() {
               thumbColor="#ffffff"
             />
           </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>SUPPORT</Text>
-          </View>
-          <Pressable style={styles.linkRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="help-circle" size={16} color="#2daaae" />
-            </View>
-            <Text style={styles.settingText}>Help Center</Text>
-            <Feather name="chevron-right" size={16} color="#93b5b6" />
-          </Pressable>
-          <Pressable style={styles.linkRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="message-circle" size={16} color="#2daaae" />
-            </View>
-            <Text style={styles.settingText}>Contact Support</Text>
-            <Feather name="chevron-right" size={16} color="#93b5b6" />
-          </Pressable>
-          <Pressable style={styles.linkRow}>
-            <View style={styles.settingIcon}>
-              <Feather name="flag" size={16} color="#2daaae" />
-            </View>
-            <Text style={styles.settingText}>Report a Bug</Text>
-            <Feather name="chevron-right" size={16} color="#93b5b6" />
-          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -146,10 +153,8 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -168,20 +173,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
     textAlign: "center",
   },
   scrollContent: {
     padding: 14,
-    gap: 12,
+    gap: 14,
   },
   card: {
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     overflow: "hidden",
   },
   sectionHeader: {
-    backgroundColor: "#e4f7f7",
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
@@ -195,32 +197,51 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 14,
-    height: 52,
+    height: 54,
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.08)",
     gap: 12,
   },
   settingIcon: {
     width: 34,
     height: 34,
-    borderRadius: 8,
-    backgroundColor: "#e4f7f7",
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   settingText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
   },
-  linkRow: {
+  langRow: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 14,
-    height: 52,
+    height: 54,
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.08)",
     gap: 12,
+  },
+  langFlag: {
+    fontSize: 13,
+    fontFamily: "Inter_700Bold",
+    color: "#2daaae",
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: "#d1d5db",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  radioActive: {
+    borderColor: "#2daaae",
+  },
+  radioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#2daaae",
   },
 });
