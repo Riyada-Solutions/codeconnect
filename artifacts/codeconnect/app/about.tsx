@@ -32,7 +32,7 @@ export default function AboutScreen() {
         <View style={styles.logoSection}>
           <View style={styles.logoCircle}>
             <Image
-              source={require("@/assets/images/icon.png")}
+              source={require("@/assets/images/logo.jpeg")}
               style={styles.logoImage}
               resizeMode="contain"
             />

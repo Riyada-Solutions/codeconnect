@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -31,7 +32,11 @@ export default function LoginScreen() {
         <View style={styles.decorCircle1} />
         <View style={styles.decorCircle2} />
         <View style={styles.logoCircle}>
-          <Feather name="activity" size={32} color="#2daaae" />
+          <Image
+            source={require("@/assets/images/logo.jpeg")}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
         <Text style={styles.logoText}>CodeConnect</Text>
       </View>
@@ -112,13 +117,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.05)",
   },
   logoCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
+    overflow: "hidden",
+  },
+  logoImage: {
+    width: 48,
+    height: 48,
   },
   logoText: {
     fontSize: 20,

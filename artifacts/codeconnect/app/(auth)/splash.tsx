@@ -1,7 +1,6 @@
-import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -51,7 +50,11 @@ export default function SplashScreen() {
 
       <View style={styles.center}>
         <Animated.View style={[styles.logoCircle, logoStyle]}>
-          <Feather name="activity" size={40} color="#2daaae" />
+          <Image
+            source={require("@/assets/images/logo.jpeg")}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </Animated.View>
         <Animated.Text style={[styles.appName, textStyle]}>CodeConnect</Animated.Text>
         <Animated.Text style={[styles.subtitle, textStyle]}>Emdad Arabia</Animated.Text>
@@ -94,13 +97,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
+    overflow: "hidden",
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
   },
   appName: {
     fontSize: 28,
