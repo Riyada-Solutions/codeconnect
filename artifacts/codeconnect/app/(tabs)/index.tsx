@@ -12,8 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
-import CodeButton from "@/components/ui/CodeButton";
-import LiveDot from "@/components/ui/LiveDot";
+import EmergencyCodeCard from "@/components/ui/EmergencyCodeCard";
 import RequestCard from "@/components/ui/RequestCard";
 import { CODES } from "@/constants/codes";
 import { mockUser, activeRequests } from "@/constants/mockData";
@@ -22,16 +21,6 @@ import { getGreeting } from "@/utils/formatTime";
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
-  const displayCodes = CODES.slice(0, 6);
-
-  const getGridColumns = (count: number) => {
-    if (count <= 2) return count;
-    if (count <= 4) return 2;
-    if (count <= 6) return 3;
-    return 4;
-  };
-
-  const columns = getGridColumns(displayCodes.length);
 
   return (
     <View style={styles.container}>
@@ -64,43 +53,29 @@ export default function HomeScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: Platform.OS === "web" ? 34 + 84 : insets.bottom + 90 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.emergencyCard}>
-          <View style={styles.emergencyHeader}>
-            <View style={styles.emergencyHeaderLeft}>
-              <LiveDot color="#10b981" size={8} />
-              <View>
-                <Text style={styles.emergencyTitle}>Emergency request</Text>
-                <Text style={styles.emergencySubtitle}>Tap a code to alert the team</Text>
-              </View>
-            </View>
-            <View style={styles.codeBadge}>
-              <Text style={styles.codeBadgeText}>{displayCodes.length} codes</Text>
-            </View>
-          </View>
-
-          <View style={styles.codeGrid}>
-            <View style={[styles.codeGridInner, { flexWrap: "wrap" }]}>
-              {displayCodes.map((code) => (
-                <View
-                  key={code.id}
-                  style={{ width: `${100 / columns - 2}%`, marginHorizontal: "1%" }}
-                >
-                  <CodeButton
-                    code={code.type}
-                    color={code.color}
-                    icon={code.icon}
-                    compact={columns > 3}
-                    onPress={() => router.push(`/emergency/new?code=${code.type}`)}
-                  />
-                </View>
-              ))}
-            </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle2}>Emergency Codes</Text>
+          <Text style={styles.sectionSubtitle}>Quick access to create alerts</Text>
+          <View style={styles.codeList}>
+            {CODES.map((code) => (
+              <EmergencyCodeCard
+                key={code.id}
+                type={code.type}
+                description={code.description}
+                color={code.color}
+                icon={code.icon}
+                onPress={() => router.push(`/emergency/new?code=${code.type}`)}
+              />
+            ))}
           </View>
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>ACTIVE REQUESTS</Text>
+            <View>
+              <Text style={styles.sectionTitle2}>Active Requests</Text>
+              <Text style={styles.sectionSubtitle}>{activeRequests.length} ongoing alerts</Text>
+            </View>
             <Pressable onPress={() => router.push("/(tabs)/alerts")}>
               <Text style={styles.viewAll}>View all</Text>
             </Pressable>
@@ -132,7 +107,7 @@ const styles = StyleSheet.create({
   hero: {
     backgroundColor: "#2daaae",
     paddingHorizontal: 14,
-    paddingBottom: 40,
+    paddingBottom: 20,
     overflow: "hidden",
   },
   decorCircle1: {
@@ -162,6 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    flex: 1,
   },
   greeting: {
     fontSize: 11,
@@ -203,78 +179,40 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    marginTop: -20,
   },
   scrollContent: {
     paddingHorizontal: 14,
-  },
-  emergencyCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 18,
-    overflow: "hidden",
-    marginBottom: 16,
-  },
-  emergencyHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 14,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.13)",
-  },
-  emergencyHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  emergencyTitle: {
-    fontSize: 12,
-    fontFamily: "Inter_500Medium",
-    color: "#0d2526",
-  },
-  emergencySubtitle: {
-    fontSize: 11,
-    color: "#93b5b6",
-    fontFamily: "Inter_400Regular",
-  },
-  codeBadge: {
-    backgroundColor: "#e4f7f7",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  codeBadgeText: {
-    fontSize: 10,
-    fontFamily: "Inter_500Medium",
-    color: "#2daaae",
-  },
-  codeGrid: {
-    backgroundColor: "#e4f7f7",
-    padding: 14,
-  },
-  codeGridInner: {
-    flexDirection: "row",
-    gap: 8,
+    paddingTop: 16,
   },
   section: {
-    marginTop: 4,
+    marginBottom: 20,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
-  sectionTitle: {
-    fontSize: 11,
-    fontFamily: "Inter_500Medium",
+  sectionTitle2: {
+    fontSize: 17,
+    fontFamily: "Inter_600SemiBold",
+    color: "#0d2526",
+  },
+  sectionSubtitle: {
+    fontSize: 12,
     color: "#93b5b6",
-    letterSpacing: 0.5,
+    fontFamily: "Inter_400Regular",
+    marginTop: 2,
+    marginBottom: 12,
   },
   viewAll: {
     fontSize: 12,
     color: "#2daaae",
     fontFamily: "Inter_500Medium",
+    marginTop: 4,
+  },
+  codeList: {
+    gap: 8,
   },
   requestList: {
     gap: 8,

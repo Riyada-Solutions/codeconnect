@@ -41,6 +41,11 @@ export const activeRequests: ActiveRequest[] = [
   { id: "r1", title: "Code Red: ICU-402", type: "urgent", location: "South Wing - Floor 4", updatedAt: "2m ago", code: "Code Red", color: "#ef4444" },
   { id: "r2", title: "Lab: STAT-Panel", type: "pending", location: "Main Lab - Central Hub", updatedAt: "15m ago", code: "Code Yellow", color: "#f59e0b" },
   { id: "r3", title: "Supply: O+ Blood Unit", type: "transit", location: "Blood Bank - OR-3", updatedAt: "5m ago", code: "Code Green", color: "#10b981" },
+  { id: "r4", title: "Code Blue: Ward B-12", type: "active", location: "Ward B - Floor 5", updatedAt: "8m ago", code: "Code Blue", color: "#3b82f6" },
+  { id: "r5", title: "Code Pink: NICU Alert", type: "urgent", location: "NICU - Floor 3", updatedAt: "10m ago", code: "Code Pink", color: "#ec4899" },
+  { id: "r6", title: "Equipment: Ventilator", type: "transit", location: "Storage - ICU Wing", updatedAt: "12m ago", code: "Code Orange", color: "#f97316" },
+  { id: "r7", title: "Code Yellow: OR-2", type: "pending", location: "Surgical Center - Floor 2", updatedAt: "18m ago", code: "Code Yellow", color: "#f59e0b" },
+  { id: "r8", title: "Pharmacy: Epinephrine", type: "transit", location: "Pharmacy - ER", updatedAt: "20m ago", code: "Code Blue", color: "#3b82f6" },
 ];
 
 export interface Alert {
