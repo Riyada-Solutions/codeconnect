@@ -13,33 +13,45 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import AlertCard from "@/components/ui/AlertCard";
 import { alertsList } from "@/constants/mockData";
+import { useApp } from "@/contexts/AppContext";
 
-const FILTERS = ["All", "Code Red", "Code Blue", "Pending", "Resolved"];
+const FILTER_KEYS = ["all", "codeRed", "codeBlue", "pending", "resolved"] as const;
 
 export default function AlertsScreen() {
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("all");
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
+
+  const filterLabels: Record<string, string> = {
+    all: t("alerts.all"),
+    codeRed: "Code Red",
+    codeBlue: "Code Blue",
+    pending: t("alerts.pending"),
+    resolved: t("alerts.resolved"),
+  };
 
   const filtered = alertsList.filter((a) => {
-    if (activeFilter === "All") return true;
-    if (activeFilter === "Pending") return a.status === "pending";
-    if (activeFilter === "Resolved") return a.status === "resolved";
-    return a.type === activeFilter;
+    if (activeFilter === "all") return true;
+    if (activeFilter === "pending") return a.status === "pending";
+    if (activeFilter === "resolved") return a.status === "resolved";
+    if (activeFilter === "codeRed") return a.type === "Code Red";
+    if (activeFilter === "codeBlue") return a.type === "Code Blue";
+    return true;
   });
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
-        <Text style={styles.headerTitle}>Active alerts</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("alerts.title")}</Text>
         <Pressable style={styles.filterIcon}>
-          <Feather name="sliders" size={18} color="#ffffff" />
+          <Feather name="sliders" size={18} color={colors.heroText} />
         </Pressable>
       </View>
 
-      <View style={styles.filtersRow}>
+      <View style={[styles.filtersRow, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <FlatList
           horizontal
-          data={FILTERS}
+          data={FILTER_KEYS as unknown as string[]}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filtersContent}
           keyExtractor={(item) => item}
@@ -47,6 +59,7 @@ export default function AlertsScreen() {
             <Pressable
               style={[
                 styles.filterChip,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 activeFilter === item && styles.filterChipActive,
               ]}
               onPress={() => setActiveFilter(item)}
@@ -54,10 +67,11 @@ export default function AlertsScreen() {
               <Text
                 style={[
                   styles.filterText,
+                  { color: colors.textSecondary },
                   activeFilter === item && styles.filterTextActive,
                 ]}
               >
-                {item}
+                {filterLabels[item] || item}
               </Text>
             </Pressable>
           )}
@@ -83,8 +97,8 @@ export default function AlertsScreen() {
         )}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Feather name="check-circle" size={40} color="#93b5b6" />
-            <Text style={styles.emptyText}>No alerts found</Text>
+            <Feather name="check-circle" size={40} color={colors.textMuted} />
+            <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t("alerts.noAlerts")}</Text>
           </View>
         }
       />
@@ -95,10 +109,8 @@ export default function AlertsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -108,7 +120,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
   },
   filterIcon: {
     width: 32,
@@ -119,9 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   filtersRow: {
-    backgroundColor: "#ffffff",
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.13)",
   },
   filtersContent: {
     paddingHorizontal: 14,
@@ -132,9 +141,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: "#ffffff",
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.13)",
   },
   filterChipActive: {
     backgroundColor: "#2daaae",
@@ -143,7 +150,6 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 12,
     fontFamily: "Inter_500Medium",
-    color: "#4a7072",
   },
   filterTextActive: {
     color: "#ffffff",
@@ -160,7 +166,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
 });

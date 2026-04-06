@@ -7,6 +7,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import { useApp } from "@/contexts/AppContext";
+
 interface EmergencyCodeCardProps {
   type: string;
   description: string;
@@ -18,13 +20,14 @@ interface EmergencyCodeCardProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function EmergencyCodeCard({ type, description, color, icon, onPress }: EmergencyCodeCardProps) {
+  const { isDark } = useApp();
   const scale = useSharedValue(1);
 
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
-  const bgColor = color + "12";
+  const bgColor = isDark ? color + "20" : color + "12";
 
   return (
     <AnimatedPressable
@@ -37,7 +40,7 @@ export default function EmergencyCodeCard({ type, description, color, icon, onPr
         <Feather name={icon as any} size={18} color={color} />
       </View>
       <View style={styles.info}>
-        <Text style={[styles.description, { color: "#4a7072" }]}>{description}</Text>
+        <Text style={[styles.description, { color: isDark ? "#93b5b6" : "#4a7072" }]}>{description}</Text>
         <Text style={[styles.codeName, { color: color }]}>{type.toUpperCase()}</Text>
       </View>
       <Feather name="chevron-right" size={18} color={color + "80"} />

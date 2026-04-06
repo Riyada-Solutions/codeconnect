@@ -13,11 +13,14 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useApp } from "@/contexts/AppContext";
+
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const insets = useSafeAreaInsets();
+  const { colors } = useApp();
 
   const handleLogin = () => {
     router.replace("/(auth)/verify-otp");
@@ -25,10 +28,10 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.card }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={[styles.heroSection, { paddingTop: insets.top + 40 }]}>
+      <View style={[styles.heroSection, { paddingTop: insets.top + 40, backgroundColor: colors.hero }]}>
         <View style={styles.decorCircle1} />
         <View style={styles.decorCircle2} />
         <View style={styles.logoCircle}>
@@ -42,16 +45,16 @@ export default function LoginScreen() {
       </View>
 
       <View style={styles.formSection}>
-        <Text style={styles.welcome}>Welcome back</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+        <Text style={[styles.welcome, { color: colors.text }]}>Welcome back</Text>
+        <Text style={[styles.subtitle, { color: colors.textMuted }]}>Sign in to your account</Text>
 
         <View style={styles.inputGroup}>
-          <View style={styles.inputContainer}>
-            <Feather name="mail" size={18} color="#93b5b6" style={styles.inputIcon} />
+          <View style={[styles.inputContainer, { borderColor: colors.border, backgroundColor: colors.inputBg }]}>
+            <Feather name="mail" size={18} color={colors.textMuted} style={styles.inputIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: colors.text }]}
               placeholder="Email address"
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -59,18 +62,18 @@ export default function LoginScreen() {
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Feather name="lock" size={18} color="#93b5b6" style={styles.inputIcon} />
+          <View style={[styles.inputContainer, { borderColor: colors.border, backgroundColor: colors.inputBg }]}>
+            <Feather name="lock" size={18} color={colors.textMuted} style={styles.inputIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: colors.text }]}
               placeholder="Password"
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
             <Pressable onPress={() => setShowPassword(!showPassword)}>
-              <Feather name={showPassword ? "eye-off" : "eye"} size={18} color="#93b5b6" />
+              <Feather name={showPassword ? "eye-off" : "eye"} size={18} color={colors.textMuted} />
             </Pressable>
           </View>
         </View>
@@ -80,7 +83,7 @@ export default function LoginScreen() {
         </Pressable>
 
         <Pressable style={styles.forgotContainer}>
-          <Text style={styles.forgotText}>Forgot password?</Text>
+          <Text style={[styles.forgotText, { color: colors.primary }]}>Forgot password?</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
@@ -90,10 +93,8 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
   heroSection: {
-    backgroundColor: "#2daaae",
     alignItems: "center",
     paddingBottom: 40,
     overflow: "hidden",
@@ -143,12 +144,10 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 24,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
     marginBottom: 32,
   },
@@ -161,10 +160,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 48,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.2)",
     borderRadius: 12,
     paddingHorizontal: 14,
-    backgroundColor: "#f8fafa",
   },
   inputIcon: {
     marginRight: 10,
@@ -172,7 +169,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: "#0d2526",
     fontFamily: "Inter_400Regular",
   },
   signInButton: {
@@ -193,7 +189,6 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     fontSize: 13,
-    color: "#2daaae",
     fontFamily: "Inter_500Medium",
   },
 });

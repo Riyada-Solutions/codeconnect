@@ -13,8 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
 import { mockUser } from "@/constants/mockData";
-import { lightTheme, darkTheme } from "@/constants/theme";
 import { useApp } from "@/contexts/AppContext";
+import type { ThemeColors } from "@/constants/theme";
 
 interface MenuRowProps {
   icon: string;
@@ -22,7 +22,7 @@ interface MenuRowProps {
   iconBg?: string;
   label: string;
   onPress?: () => void;
-  colors: typeof lightTheme;
+  colors: ThemeColors;
 }
 
 function MenuRow({ icon, iconColor, iconBg, label, onPress, colors }: MenuRowProps) {
@@ -42,8 +42,7 @@ function MenuRow({ icon, iconColor, iconBg, label, onPress, colors }: MenuRowPro
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { t, isDark } = useApp();
-  const colors = isDark ? darkTheme : lightTheme;
+  const { t, colors } = useApp();
 
   const handleLogout = () => {
     router.replace("/(auth)/login");

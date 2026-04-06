@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { useApp } from "@/contexts/AppContext";
 import Badge from "./Badge";
 
 interface AlertCardProps {
@@ -23,29 +24,30 @@ export default function AlertCard({
   timestamp,
   onPress,
 }: AlertCardProps) {
+  const { colors, t } = useApp();
   const statusVariant = status === "active" ? "urgent" : status === "pending" ? "pending" : "resolved";
 
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+    <Pressable style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={onPress}>
       <View style={[styles.leftBorder, { backgroundColor: color }]} />
       <View style={styles.content}>
         <View style={styles.header}>
           <View style={[styles.dot, { backgroundColor: color }]} />
-          <Text style={styles.title} numberOfLines={1}>{title}</Text>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{title}</Text>
         </View>
         <View style={styles.locationRow}>
-          <Feather name="map-pin" size={11} color="#93b5b6" />
-          <Text style={styles.location}>{location}</Text>
+          <Feather name="map-pin" size={11} color={colors.textMuted} />
+          <Text style={[styles.location, { color: colors.textMuted }]}>{location}</Text>
         </View>
         <View style={styles.footer}>
           <Badge label={status} variant={statusVariant} />
-          <Text style={styles.timestamp}>{timestamp}</Text>
+          <Text style={[styles.timestamp, { color: colors.textMuted }]}>{timestamp}</Text>
         </View>
       </View>
       <View style={styles.right}>
-        <Text style={styles.respondersText}>{responders} responding</Text>
-        <View style={styles.arrowBtn}>
-          <Feather name="chevron-right" size={14} color="#2daaae" />
+        <Text style={[styles.respondersText, { color: colors.textSecondary }]}>{responders} {t("alerts.responding")}</Text>
+        <View style={[styles.arrowBtn, { backgroundColor: colors.primaryLight }]}>
+          <Feather name="chevron-right" size={14} color={colors.primary} />
         </View>
       </View>
     </Pressable>
@@ -55,10 +57,8 @@ export default function AlertCard({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.13)",
     overflow: "hidden",
   },
   leftBorder: {
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     flex: 1,
   },
   locationRow: {
@@ -93,7 +92,6 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 11,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   footer: {
@@ -105,7 +103,6 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 10,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   right: {
@@ -116,14 +113,12 @@ const styles = StyleSheet.create({
   },
   respondersText: {
     fontSize: 10,
-    color: "#4a7072",
     fontFamily: "Inter_400Regular",
   },
   arrowBtn: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#e4f7f7",
     alignItems: "center",
     justifyContent: "center",
   },

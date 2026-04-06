@@ -14,23 +14,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
 import { mockUser } from "@/constants/mockData";
+import { useApp } from "@/contexts/AppContext";
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
   const [name, setName] = useState(mockUser.name);
   const [email, setEmail] = useState(mockUser.email);
   const [phone, setPhone] = useState(mockUser.phone);
   const [department, setDepartment] = useState(mockUser.department);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#ffffff" />
+          <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("editProfile.title")}</Text>
         <Pressable style={styles.saveBtn} onPress={() => router.back()}>
-          <Feather name="check" size={20} color="#ffffff" />
+          <Feather name="check" size={20} color={colors.heroText} />
         </Pressable>
       </View>
 
@@ -42,67 +44,67 @@ export default function EditProfileScreen() {
           <Avatar
             initials={mockUser.initials}
             size={80}
-            backgroundColor="#e4f7f7"
-            textColor="#2daaae"
-            borderColor="#2daaae"
+            backgroundColor={colors.primaryLight}
+            textColor={colors.primary}
+            borderColor={colors.primary}
             borderWidth={2}
           />
           <Pressable style={styles.changePhotoBtn}>
-            <Feather name="camera" size={14} color="#2daaae" />
-            <Text style={styles.changePhotoText}>Change photo</Text>
+            <Feather name="camera" size={14} color={colors.primary} />
+            <Text style={[styles.changePhotoText, { color: colors.primary }]}>{t("editProfile.changePhoto")}</Text>
           </Pressable>
         </View>
 
-        <View style={styles.form}>
+        <View style={[styles.form, { backgroundColor: colors.card }]}>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Full Name</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.fullName").toUpperCase()}</Text>
             <TextInput
-              style={styles.fieldInput}
+              style={[styles.fieldInput, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
               value={name}
               onChangeText={setName}
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
             />
           </View>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Email</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.email").toUpperCase()}</Text>
             <TextInput
-              style={styles.fieldInput}
+              style={[styles.fieldInput, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
             />
           </View>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Phone</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.phone").toUpperCase()}</Text>
             <TextInput
-              style={styles.fieldInput}
+              style={[styles.fieldInput, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
             />
           </View>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Department</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.department").toUpperCase()}</Text>
             <TextInput
-              style={styles.fieldInput}
+              style={[styles.fieldInput, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
               value={department}
               onChangeText={setDepartment}
-              placeholderTextColor="#93b5b6"
+              placeholderTextColor={colors.textMuted}
             />
           </View>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Role</Text>
-            <View style={[styles.fieldInput, styles.fieldDisabled]}>
-              <Text style={styles.disabledText}>{mockUser.role}</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.role").toUpperCase()}</Text>
+            <View style={[styles.fieldInput, styles.fieldDisabled, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+              <Text style={[styles.disabledText, { color: colors.textMuted }]}>{mockUser.role}</Text>
             </View>
           </View>
           <View style={styles.field}>
-            <Text style={styles.fieldLabel}>Employee ID</Text>
-            <View style={[styles.fieldInput, styles.fieldDisabled]}>
-              <Text style={styles.disabledText}>{mockUser.employeeId}</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>{t("editProfile.employeeId").toUpperCase()}</Text>
+            <View style={[styles.fieldInput, styles.fieldDisabled, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+              <Text style={[styles.disabledText, { color: colors.textMuted }]}>{mockUser.employeeId}</Text>
             </View>
           </View>
         </View>
@@ -114,10 +116,8 @@ export default function EditProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
   },
   saveBtn: {
     width: 32,
@@ -160,11 +159,9 @@ const styles = StyleSheet.create({
   },
   changePhotoText: {
     fontSize: 13,
-    color: "#2daaae",
     fontFamily: "Inter_500Medium",
   },
   form: {
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: 16,
     gap: 16,
@@ -175,7 +172,6 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 11,
     fontFamily: "Inter_500Medium",
-    color: "#93b5b6",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -183,21 +179,16 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.2)",
     paddingHorizontal: 14,
     fontSize: 14,
     fontFamily: "Inter_400Regular",
-    color: "#0d2526",
-    backgroundColor: "#f8fafa",
     justifyContent: "center",
   },
   fieldDisabled: {
-    backgroundColor: "#f0f0f0",
-    borderColor: "#e0e0e0",
+    opacity: 0.7,
   },
   disabledText: {
     fontSize: 14,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
 });

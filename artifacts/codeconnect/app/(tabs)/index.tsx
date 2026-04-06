@@ -16,15 +16,17 @@ import EmergencyCodeCard from "@/components/ui/EmergencyCodeCard";
 import RequestCard from "@/components/ui/RequestCard";
 import { CODES } from "@/constants/codes";
 import { mockUser, activeRequests } from "@/constants/mockData";
+import { useApp } from "@/contexts/AppContext";
 import { getGreeting } from "@/utils/formatTime";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.hero, { paddingTop: topPad + 16 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.hero, { paddingTop: topPad + 16, backgroundColor: colors.hero }]}>
         <View style={styles.decorCircle1} />
         <View style={styles.decorCircle2} />
         <View style={styles.heroContent}>
@@ -54,8 +56,8 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle2}>Emergency Codes</Text>
-          <Text style={styles.sectionSubtitle}>Quick access to create alerts</Text>
+          <Text style={[styles.sectionTitle2, { color: colors.text }]}>{t("home.emergencyCodes")}</Text>
+          <Text style={[styles.sectionSubtitle, { color: colors.textMuted }]}>{t("home.quickAccess")}</Text>
           <View style={styles.codeList}>
             {CODES.map((code) => (
               <EmergencyCodeCard
@@ -73,11 +75,11 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View>
-              <Text style={styles.sectionTitle2}>Active Requests</Text>
-              <Text style={styles.sectionSubtitle}>{activeRequests.length} ongoing alerts</Text>
+              <Text style={[styles.sectionTitle2, { color: colors.text }]}>{t("home.activeRequests")}</Text>
+              <Text style={[styles.sectionSubtitle, { color: colors.textMuted }]}>{activeRequests.length} {t("home.ongoingAlerts")}</Text>
             </View>
             <Pressable onPress={() => router.push("/(tabs)/alerts")}>
-              <Text style={styles.viewAll}>View all</Text>
+              <Text style={[styles.viewAll, { color: colors.primary }]}>{t("home.viewAll")}</Text>
             </Pressable>
           </View>
           <View style={styles.requestList}>
@@ -102,10 +104,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   hero: {
-    backgroundColor: "#2daaae",
     paddingHorizontal: 14,
     paddingBottom: 20,
     overflow: "hidden",
@@ -196,18 +196,15 @@ const styles = StyleSheet.create({
   sectionTitle2: {
     fontSize: 17,
     fontFamily: "Inter_600SemiBold",
-    color: "#0d2526",
   },
   sectionSubtitle: {
     fontSize: 12,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
     marginTop: 2,
     marginBottom: 12,
   },
   viewAll: {
     fontSize: 12,
-    color: "#2daaae",
     fontFamily: "Inter_500Medium",
     marginTop: 4,
   },

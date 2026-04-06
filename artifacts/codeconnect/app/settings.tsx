@@ -12,13 +12,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { lightTheme, darkTheme } from "@/constants/theme";
 import { useApp } from "@/contexts/AppContext";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { t, isDark, toggleTheme, language, setLanguage } = useApp();
-  const colors = isDark ? darkTheme : lightTheme;
+  const { t, isDark, colors, toggleTheme, language, setLanguage } = useApp();
   const [pushNotif, setPushNotif] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibration, setVibration] = useState(true);

@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { notifications } from "@/constants/mockData";
+import { useApp } from "@/contexts/AppContext";
 
 const typeIcons: Record<string, string> = {
   urgent: "alert-circle",
@@ -27,14 +28,15 @@ const typeColors: Record<string, string> = {
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#ffffff" />
+          <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("notifications.title")}</Text>
         <View style={{ width: 32 }} />
       </View>
 
@@ -48,25 +50,25 @@ export default function NotificationsScreen() {
           const iconColor = typeColors[item.type] || "#3b82f6";
 
           return (
-            <View style={[styles.notifCard, !item.read && styles.unread]}>
+            <View style={[styles.notifCard, { backgroundColor: colors.card }, !item.read && { borderLeftWidth: 3, borderLeftColor: colors.primary }]}>
               <View style={[styles.notifIcon, { backgroundColor: iconColor + "15" }]}>
                 <Feather name={iconName as any} size={18} color={iconColor} />
               </View>
               <View style={styles.notifContent}>
                 <View style={styles.notifHeader}>
-                  <Text style={styles.notifTitle}>{item.title}</Text>
-                  {!item.read && <View style={styles.unreadDot} />}
+                  <Text style={[styles.notifTitle, { color: colors.text }]}>{item.title}</Text>
+                  {!item.read && <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />}
                 </View>
-                <Text style={styles.notifMessage}>{item.message}</Text>
-                <Text style={styles.notifTime}>{item.time}</Text>
+                <Text style={[styles.notifMessage, { color: colors.textSecondary }]}>{item.message}</Text>
+                <Text style={[styles.notifTime, { color: colors.textMuted }]}>{item.time}</Text>
               </View>
             </View>
           );
         }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Feather name="bell-off" size={40} color="#93b5b6" />
-            <Text style={styles.emptyText}>No notifications</Text>
+            <Feather name="bell-off" size={40} color={colors.textMuted} />
+            <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t("notifications.empty")}</Text>
           </View>
         }
       />
@@ -77,10 +79,8 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
     textAlign: "center",
   },
   list: {
@@ -108,14 +107,9 @@ const styles = StyleSheet.create({
   },
   notifCard: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: 14,
     gap: 12,
-  },
-  unread: {
-    borderLeftWidth: 3,
-    borderLeftColor: "#2daaae",
   },
   notifIcon: {
     width: 36,
@@ -136,23 +130,19 @@ const styles = StyleSheet.create({
   notifTitle: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     flex: 1,
   },
   unreadDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#2daaae",
   },
   notifMessage: {
     fontSize: 12,
-    color: "#4a7072",
     fontFamily: "Inter_400Regular",
   },
   notifTime: {
     fontSize: 10,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   empty: {
@@ -163,7 +153,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
 });

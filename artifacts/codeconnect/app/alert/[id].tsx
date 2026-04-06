@@ -14,11 +14,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import { alertsList } from "@/constants/mockData";
+import { useApp } from "@/contexts/AppContext";
 import { formatTime } from "@/utils/formatTime";
 
 export default function AlertDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
   const [elapsed, setElapsed] = useState(0);
 
   const alert = alertsList.find((a) => a.id === id) || alertsList[0];
@@ -31,12 +33,12 @@ export default function AlertDetailScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#ffffff" />
+          <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>{alert.title}</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]} numberOfLines={1}>{alert.title}</Text>
         <View style={{ width: 32 }} />
       </View>
 
@@ -57,46 +59,46 @@ export default function AlertDetailScreen() {
           <Badge label={alert.status} variant={alert.status === "active" ? "urgent" : alert.status === "pending" ? "pending" : "resolved"} />
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Location Details</Text>
+        <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
+          <Text style={[styles.infoTitle, { color: colors.text }]}>{t("alertDetail.locationDetails")}</Text>
           <View style={styles.infoRow}>
-            <Feather name="home" size={14} color="#2daaae" />
-            <Text style={styles.infoLabel}>Building</Text>
-            <Text style={styles.infoValue}>{alert.building}</Text>
+            <Feather name="home" size={14} color={colors.primary} />
+            <Text style={[styles.infoLabel, { color: colors.textMuted }]}>{t("alertDetail.building")}</Text>
+            <Text style={[styles.infoValue, { color: colors.text }]}>{alert.building}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Feather name="layers" size={14} color="#2daaae" />
-            <Text style={styles.infoLabel}>Floor</Text>
-            <Text style={styles.infoValue}>{alert.floor}</Text>
+            <Feather name="layers" size={14} color={colors.primary} />
+            <Text style={[styles.infoLabel, { color: colors.textMuted }]}>{t("alertDetail.floor")}</Text>
+            <Text style={[styles.infoValue, { color: colors.text }]}>{alert.floor}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Feather name="grid" size={14} color="#2daaae" />
-            <Text style={styles.infoLabel}>Department</Text>
-            <Text style={styles.infoValue}>{alert.department}</Text>
+            <Feather name="grid" size={14} color={colors.primary} />
+            <Text style={[styles.infoLabel, { color: colors.textMuted }]}>{t("alertDetail.department")}</Text>
+            <Text style={[styles.infoValue, { color: colors.text }]}>{alert.department}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Feather name="square" size={14} color="#2daaae" />
-            <Text style={styles.infoLabel}>Room</Text>
-            <Text style={styles.infoValue}>{alert.room}</Text>
+            <Feather name="square" size={14} color={colors.primary} />
+            <Text style={[styles.infoLabel, { color: colors.textMuted }]}>{t("alertDetail.room")}</Text>
+            <Text style={[styles.infoValue, { color: colors.text }]}>{alert.room}</Text>
           </View>
         </View>
 
-        <View style={styles.respondersCard}>
-          <Text style={styles.infoTitle}>Responders ({alert.respondersList.length})</Text>
+        <View style={[styles.respondersCard, { backgroundColor: colors.card }]}>
+          <Text style={[styles.infoTitle, { color: colors.text }]}>{t("alertDetail.responders")} ({alert.respondersList.length})</Text>
           {alert.respondersList.length === 0 ? (
             <View style={styles.emptyResp}>
-              <Feather name="users" size={24} color="#93b5b6" />
-              <Text style={styles.emptyRespText}>No responders yet</Text>
+              <Feather name="users" size={24} color={colors.textMuted} />
+              <Text style={[styles.emptyRespText, { color: colors.textMuted }]}>{t("alertDetail.noResponders")}</Text>
             </View>
           ) : (
             alert.respondersList.map((r) => (
               <View key={r.id} style={styles.responderRow}>
-                <Avatar initials={r.avatar} size={36} backgroundColor="#e4f7f7" textColor="#2daaae" />
+                <Avatar initials={r.avatar} size={36} backgroundColor={colors.primaryLight} textColor={colors.primary} />
                 <View style={styles.responderInfo}>
-                  <Text style={styles.responderName}>{r.name}</Text>
-                  <Text style={styles.responderRole}>{r.role}</Text>
+                  <Text style={[styles.responderName, { color: colors.text }]}>{r.name}</Text>
+                  <Text style={[styles.responderRole, { color: colors.textMuted }]}>{r.role}</Text>
                 </View>
-                <Text style={styles.responderTime}>{r.respondedAt}</Text>
+                <Text style={[styles.responderTime, { color: colors.textMuted }]}>{r.respondedAt}</Text>
               </View>
             ))
           )}
@@ -104,10 +106,10 @@ export default function AlertDetailScreen() {
 
         <View style={styles.actions}>
           <Pressable style={styles.respondBtn}>
-            <Text style={styles.respondText}>Respond</Text>
+            <Text style={styles.respondText}>{t("alertDetail.respond")}</Text>
           </Pressable>
-          <Pressable style={styles.escalateBtn}>
-            <Text style={styles.escalateText}>Escalate</Text>
+          <Pressable style={[styles.escalateBtn, { borderColor: colors.primary }]}>
+            <Text style={[styles.escalateText, { color: colors.primary }]}>{t("alertDetail.escalate")}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -118,10 +120,8 @@ export default function AlertDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
     textAlign: "center",
   },
   scrollContent: {
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   infoCard: {
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: 16,
     gap: 12,
@@ -187,7 +185,6 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 14,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     marginBottom: 4,
   },
   infoRow: {
@@ -197,18 +194,15 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
     width: 80,
   },
   infoValue: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     flex: 1,
   },
   respondersCard: {
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: 16,
     gap: 12,
@@ -220,7 +214,6 @@ const styles = StyleSheet.create({
   },
   emptyRespText: {
     fontSize: 13,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   responderRow: {
@@ -235,16 +228,13 @@ const styles = StyleSheet.create({
   responderName: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
   },
   responderRole: {
     fontSize: 11,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   responderTime: {
     fontSize: 10,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   actions: {
@@ -270,13 +260,11 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: "#2daaae",
     alignItems: "center",
     justifyContent: "center",
   },
   escalateText: {
     fontSize: 15,
     fontFamily: "Inter_600SemiBold",
-    color: "#2daaae",
   },
 });

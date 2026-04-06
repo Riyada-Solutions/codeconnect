@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { I18nManager } from "react-native";
 
+import { lightTheme, darkTheme, type ThemeColors } from "@/constants/theme";
+
 type Language = "en" | "ar";
 type Theme = "light" | "dark";
 
@@ -9,6 +11,7 @@ interface AppContextType {
   language: Language;
   theme: Theme;
   isDark: boolean;
+  colors: ThemeColors;
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
@@ -58,6 +61,56 @@ const translations: Record<string, Record<Language, string>> = {
   "tabs.home": { en: "Home", ar: "\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629" },
   "tabs.alerts": { en: "Alerts", ar: "\u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a" },
   "tabs.profile": { en: "Profile", ar: "\u0627\u0644\u0645\u0644\u0641 \u0627\u0644\u0634\u062e\u0635\u064a" },
+  "home.emergencyCodes": { en: "Emergency Codes", ar: "\u0631\u0645\u0648\u0632 \u0627\u0644\u0637\u0648\u0627\u0631\u0626" },
+  "home.quickAccess": { en: "Quick access to create alerts", ar: "\u0648\u0635\u0648\u0644 \u0633\u0631\u064a\u0639 \u0644\u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a" },
+  "home.activeRequests": { en: "Active Requests", ar: "\u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0646\u0634\u0637\u0629" },
+  "home.ongoingAlerts": { en: "ongoing alerts", ar: "\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u062c\u0627\u0631\u064a\u0629" },
+  "home.viewAll": { en: "View all", ar: "\u0639\u0631\u0636 \u0627\u0644\u0643\u0644" },
+  "alerts.title": { en: "Active alerts", ar: "\u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0646\u0634\u0637\u0629" },
+  "alerts.all": { en: "All", ar: "\u0627\u0644\u0643\u0644" },
+  "alerts.pending": { en: "Pending", ar: "\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631" },
+  "alerts.resolved": { en: "Resolved", ar: "\u062a\u0645 \u0627\u0644\u062d\u0644" },
+  "alerts.noAlerts": { en: "No alerts found", ar: "\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a" },
+  "alerts.responding": { en: "responding", ar: "\u064a\u0633\u062a\u062c\u064a\u0628" },
+  "alertDetail.locationDetails": { en: "Location Details", ar: "\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0645\u0648\u0642\u0639" },
+  "alertDetail.building": { en: "Building", ar: "\u0627\u0644\u0645\u0628\u0646\u0649" },
+  "alertDetail.floor": { en: "Floor", ar: "\u0627\u0644\u0637\u0627\u0628\u0642" },
+  "alertDetail.department": { en: "Department", ar: "\u0627\u0644\u0642\u0633\u0645" },
+  "alertDetail.room": { en: "Room", ar: "\u0627\u0644\u063a\u0631\u0641\u0629" },
+  "alertDetail.responders": { en: "Responders", ar: "\u0627\u0644\u0645\u0633\u062a\u062c\u064a\u0628\u0648\u0646" },
+  "alertDetail.noResponders": { en: "No responders yet", ar: "\u0644\u0627 \u064a\u0648\u062c\u062f \u0645\u0633\u062a\u062c\u064a\u0628\u0648\u0646 \u0628\u0639\u062f" },
+  "alertDetail.respond": { en: "Respond", ar: "\u0627\u0633\u062a\u062c\u0627\u0628\u0629" },
+  "alertDetail.escalate": { en: "Escalate", ar: "\u062a\u0635\u0639\u064a\u062f" },
+  "notifications.title": { en: "Notifications", ar: "\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a" },
+  "notifications.empty": { en: "No notifications", ar: "\u0644\u0627 \u062a\u0648\u062c\u062f \u0625\u0634\u0639\u0627\u0631\u0627\u062a" },
+  "emergency.title": { en: "New emergency request", ar: "\u0637\u0644\u0628 \u0637\u0648\u0627\u0631\u0626 \u062c\u062f\u064a\u062f" },
+  "emergency.selectCode": { en: "SELECT CODE TYPE", ar: "\u0627\u062e\u062a\u0631 \u0646\u0648\u0639 \u0627\u0644\u0631\u0645\u0632" },
+  "emergency.location": { en: "LOCATION", ar: "\u0627\u0644\u0645\u0648\u0642\u0639" },
+  "emergency.selectBuilding": { en: "Select building", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u0628\u0646\u0649" },
+  "emergency.selectFloor": { en: "Select floor", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u0637\u0627\u0628\u0642" },
+  "emergency.selectDept": { en: "Select department", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u0642\u0633\u0645" },
+  "emergency.selectRoom": { en: "Select room", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u063a\u0631\u0641\u0629" },
+  "emergency.notes": { en: "NOTES", ar: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a" },
+  "emergency.notesPlaceholder": { en: "Additional details...", ar: "\u062a\u0641\u0627\u0635\u064a\u0644 \u0625\u0636\u0627\u0641\u064a\u0629..." },
+  "emergency.activate": { en: "Activate alert", ar: "\u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062a\u0646\u0628\u064a\u0647" },
+  "editProfile.title": { en: "Edit Profile", ar: "\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0644\u0641 \u0627\u0644\u0634\u062e\u0635\u064a" },
+  "editProfile.fullName": { en: "Full Name", ar: "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644" },
+  "editProfile.email": { en: "Email", ar: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" },
+  "editProfile.phone": { en: "Phone", ar: "\u0627\u0644\u0647\u0627\u062a\u0641" },
+  "editProfile.department": { en: "Department", ar: "\u0627\u0644\u0642\u0633\u0645" },
+  "editProfile.role": { en: "Role", ar: "\u0627\u0644\u062f\u0648\u0631" },
+  "editProfile.employeeId": { en: "Employee ID", ar: "\u0631\u0642\u0645 \u0627\u0644\u0645\u0648\u0638\u0641" },
+  "editProfile.changePhoto": { en: "Change photo", ar: "\u062a\u063a\u064a\u064a\u0631 \u0627\u0644\u0635\u0648\u0631\u0629" },
+  "privacy.title": { en: "Privacy Policy", ar: "\u0633\u064a\u0627\u0633\u0629 \u0627\u0644\u062e\u0635\u0648\u0635\u064a\u0629" },
+  "terms.title": { en: "Terms of Service", ar: "\u0634\u0631\u0648\u0637 \u0627\u0644\u062e\u062f\u0645\u0629" },
+  "about.title": { en: "About", ar: "\u062d\u0648\u0644" },
+  "about.features": { en: "Features", ar: "\u0627\u0644\u0645\u064a\u0632\u0627\u062a" },
+  "about.legal": { en: "Legal", ar: "\u0642\u0627\u0646\u0648\u0646\u064a" },
+  "changePassword.title": { en: "Change Password", ar: "\u062a\u063a\u064a\u064a\u0631 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" },
+  "changePassword.current": { en: "Current Password", ar: "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0627\u0644\u062d\u0627\u0644\u064a\u0629" },
+  "changePassword.new": { en: "New Password", ar: "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0627\u0644\u062c\u062f\u064a\u062f\u0629" },
+  "changePassword.confirm": { en: "Confirm New Password", ar: "\u062a\u0623\u0643\u064a\u062f \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" },
+  "changePassword.update": { en: "Update Password", ar: "\u062a\u062d\u062f\u064a\u062b \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" },
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -98,12 +151,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return translations[key]?.[language] || key;
   };
 
+  const colors = theme === "dark" ? darkTheme : lightTheme;
+
   return (
     <AppContext.Provider
       value={{
         language,
         theme,
         isDark: theme === "dark",
+        colors,
         setLanguage,
         setTheme,
         toggleTheme,

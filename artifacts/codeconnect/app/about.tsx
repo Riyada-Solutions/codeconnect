@@ -12,16 +12,19 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useApp } from "@/contexts/AppContext";
+
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={20} color="#ffffff" />
+          <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={styles.headerTitle}>About</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("about.title")}</Text>
         <View style={{ width: 32 }} />
       </View>
 
@@ -30,31 +33,31 @@ export default function AboutScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.logoSection}>
-          <View style={styles.logoCircle}>
+          <View style={[styles.logoCircle, { backgroundColor: colors.card }]}>
             <Image
               source={require("@/assets/images/logo.jpeg")}
               style={styles.logoImage}
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.appName}>CodeConnect</Text>
-          <Text style={styles.version}>Version 1.0.0</Text>
-          <View style={styles.byBadge}>
-            <Text style={styles.byText}>By Emdad Arabia</Text>
+          <Text style={[styles.appName, { color: colors.text }]}>CodeConnect</Text>
+          <Text style={[styles.version, { color: colors.textMuted }]}>Version 1.0.0</Text>
+          <View style={[styles.byBadge, { backgroundColor: colors.primaryLight }]}>
+            <Text style={[styles.byText, { color: colors.primary }]}>By Emdad Arabia</Text>
           </View>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.description}>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>
             CodeConnect is a comprehensive hospital emergency response coordination system designed to streamline communication and response times during critical situations.
           </Text>
-          <Text style={styles.description}>
+          <Text style={[styles.description, { color: colors.textSecondary }]}>
             Our mission is to save lives by reducing emergency response times through real-time coordination, instant notifications, and seamless team communication across hospital departments.
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Features</Text>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>{t("about.features")}</Text>
           <View style={styles.featureList}>
             {[
               { icon: "zap", text: "Real-time emergency alerts" },
@@ -65,28 +68,28 @@ export default function AboutScreen() {
               { icon: "bar-chart-2", text: "Analytics dashboard" },
             ].map((f, i) => (
               <View key={i} style={styles.featureRow}>
-                <View style={styles.featureIcon}>
-                  <Feather name={f.icon as any} size={14} color="#2daaae" />
+                <View style={[styles.featureIcon, { backgroundColor: colors.primaryLight }]}>
+                  <Feather name={f.icon as any} size={14} color={colors.primary} />
                 </View>
-                <Text style={styles.featureText}>{f.text}</Text>
+                <Text style={[styles.featureText, { color: colors.text }]}>{f.text}</Text>
               </View>
             ))}
           </View>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Legal</Text>
-          <Pressable style={styles.linkRow} onPress={() => router.push("/privacy")}>
-            <Text style={styles.linkText}>Privacy Policy</Text>
-            <Feather name="chevron-right" size={16} color="#93b5b6" />
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>{t("about.legal")}</Text>
+          <Pressable style={[styles.linkRow, { borderBottomColor: colors.border }]} onPress={() => router.push("/privacy")}>
+            <Text style={[styles.linkText, { color: colors.primary }]}>{t("privacy.title")}</Text>
+            <Feather name="chevron-right" size={16} color={colors.textMuted} />
           </Pressable>
-          <Pressable style={styles.linkRow} onPress={() => router.push("/terms")}>
-            <Text style={styles.linkText}>Terms of Service</Text>
-            <Feather name="chevron-right" size={16} color="#93b5b6" />
+          <Pressable style={[styles.linkRow, { borderBottomColor: colors.border }]} onPress={() => router.push("/terms")}>
+            <Text style={[styles.linkText, { color: colors.primary }]}>{t("terms.title")}</Text>
+            <Feather name="chevron-right" size={16} color={colors.textMuted} />
           </Pressable>
         </View>
 
-        <Text style={styles.copyright}>
+        <Text style={[styles.copyright, { color: colors.textMuted }]}>
           2025 Emdad Arabia. All rights reserved.
         </Text>
       </ScrollView>
@@ -97,10 +100,8 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
@@ -119,7 +120,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
     textAlign: "center",
   },
   scrollContent: {
@@ -145,15 +145,12 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 22,
     fontFamily: "Inter_600SemiBold",
-    color: "#0d2526",
   },
   version: {
     fontSize: 12,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   byBadge: {
-    backgroundColor: "#e4f7f7",
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
@@ -162,24 +159,20 @@ const styles = StyleSheet.create({
   byText: {
     fontSize: 11,
     fontFamily: "Inter_500Medium",
-    color: "#2daaae",
   },
   card: {
-    backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: 16,
     gap: 10,
   },
   description: {
     fontSize: 13,
-    color: "#4a7072",
     fontFamily: "Inter_400Regular",
     lineHeight: 20,
   },
   cardTitle: {
     fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-    color: "#0d2526",
     marginBottom: 4,
   },
   featureList: {
@@ -194,13 +187,11 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 7,
-    backgroundColor: "#e4f7f7",
     alignItems: "center",
     justifyContent: "center",
   },
   featureText: {
     fontSize: 13,
-    color: "#0d2526",
     fontFamily: "Inter_400Regular",
   },
   linkRow: {
@@ -209,17 +200,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.08)",
   },
   linkText: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
-    color: "#2daaae",
   },
   copyright: {
     textAlign: "center",
     fontSize: 11,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
     marginTop: 8,
   },

@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CODES } from "@/constants/codes";
+import { useApp } from "@/contexts/AppContext";
 
 const BUILDINGS = ["Main Hospital", "Emergency Wing", "Women's Center", "Surgical Center"];
 const FLOORS = ["Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5"];
@@ -23,6 +24,7 @@ const ROOMS = ["Room 1", "Room 2", "Room 3", "Room 4", "Room 5", "Room 6", "Room
 export default function NewEmergencyScreen() {
   const { code: preselectedCode } = useLocalSearchParams<{ code: string }>();
   const insets = useSafeAreaInsets();
+  const { colors, t } = useApp();
 
   const [selectedCode, setSelectedCode] = useState(preselectedCode || "");
   const [building, setBuilding] = useState("");
@@ -37,12 +39,12 @@ export default function NewEmergencyScreen() {
 
   const handleActivate = () => {
     Alert.alert(
-      "Activate Alert",
+      t("emergency.activate"),
       `Are you sure you want to activate ${selectedCode}?`,
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Activate",
+          text: t("emergency.activate"),
           style: "destructive",
           onPress: () => router.back(),
         },
@@ -58,17 +60,17 @@ export default function NewEmergencyScreen() {
   ) => {
     if (!show) return null;
     return (
-      <View style={styles.pickerList}>
+      <View style={[styles.pickerList, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {items.map((item) => (
           <Pressable
             key={item}
-            style={styles.pickerItem}
+            style={[styles.pickerItem, { borderBottomColor: colors.border }]}
             onPress={() => {
               onSelect(item);
               setShow(false);
             }}
           >
-            <Text style={styles.pickerItemText}>{item}</Text>
+            <Text style={[styles.pickerItemText, { color: colors.text }]}>{item}</Text>
           </Pressable>
         ))}
       </View>
@@ -76,11 +78,11 @@ export default function NewEmergencyScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12 }]}>
-        <Text style={styles.headerTitle}>New emergency request</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { paddingTop: Platform.OS === "web" ? 67 : insets.top + 12, backgroundColor: colors.hero }]}>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("emergency.title")}</Text>
         <Pressable style={styles.closeBtn} onPress={() => router.back()}>
-          <Feather name="x" size={20} color="#ffffff" />
+          <Feather name="x" size={20} color={colors.heroText} />
         </Pressable>
       </View>
 
@@ -88,7 +90,7 @@ export default function NewEmergencyScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.sectionLabel}>SELECT CODE TYPE</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t("emergency.selectCode")}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.codeScroll}>
           <View style={styles.codeRow}>
             {CODES.map((c) => (
@@ -96,6 +98,7 @@ export default function NewEmergencyScreen() {
                 key={c.id}
                 style={[
                   styles.codePill,
+                  { backgroundColor: colors.card, borderColor: colors.border },
                   selectedCode === c.type && { backgroundColor: c.color, borderColor: c.color },
                 ]}
                 onPress={() => setSelectedCode(c.type)}
@@ -103,6 +106,7 @@ export default function NewEmergencyScreen() {
                 <Text
                   style={[
                     styles.codePillText,
+                    { color: colors.textSecondary },
                     selectedCode === c.type && { color: "#ffffff" },
                   ]}
                 >
@@ -113,13 +117,13 @@ export default function NewEmergencyScreen() {
           </View>
         </ScrollView>
 
-        <Text style={styles.sectionLabel}>LOCATION</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t("emergency.location")}</Text>
         <View style={styles.fieldGroup}>
-          <Pressable style={styles.dropdown} onPress={() => setShowBuildingPicker(!showBuildingPicker)}>
-            <Text style={building ? styles.dropdownValue : styles.dropdownPlaceholder}>
-              {building || "Select building"}
+          <Pressable style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => setShowBuildingPicker(!showBuildingPicker)}>
+            <Text style={building ? [styles.dropdownValue, { color: colors.text }] : [styles.dropdownPlaceholder, { color: colors.textMuted }]}>
+              {building || t("emergency.selectBuilding")}
             </Text>
-            <Feather name="chevron-down" size={16} color="#93b5b6" />
+            <Feather name="chevron-down" size={16} color={colors.textMuted} />
           </Pressable>
           {renderPicker(BUILDINGS, showBuildingPicker, setShowBuildingPicker, (v) => {
             setBuilding(v);
@@ -129,13 +133,13 @@ export default function NewEmergencyScreen() {
           })}
 
           <Pressable
-            style={[styles.dropdown, !building && styles.dropdownDisabled]}
+            style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }, !building && styles.dropdownDisabled]}
             onPress={() => building && setShowFloorPicker(!showFloorPicker)}
           >
-            <Text style={floor ? styles.dropdownValue : styles.dropdownPlaceholder}>
-              {floor || "Select floor"}
+            <Text style={floor ? [styles.dropdownValue, { color: colors.text }] : [styles.dropdownPlaceholder, { color: colors.textMuted }]}>
+              {floor || t("emergency.selectFloor")}
             </Text>
-            <Feather name="chevron-down" size={16} color="#93b5b6" />
+            <Feather name="chevron-down" size={16} color={colors.textMuted} />
           </Pressable>
           {renderPicker(FLOORS, showFloorPicker, setShowFloorPicker, (v) => {
             setFloor(v);
@@ -144,13 +148,13 @@ export default function NewEmergencyScreen() {
           })}
 
           <Pressable
-            style={[styles.dropdown, !floor && styles.dropdownDisabled]}
+            style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }, !floor && styles.dropdownDisabled]}
             onPress={() => floor && setShowDeptPicker(!showDeptPicker)}
           >
-            <Text style={department ? styles.dropdownValue : styles.dropdownPlaceholder}>
-              {department || "Select department"}
+            <Text style={department ? [styles.dropdownValue, { color: colors.text }] : [styles.dropdownPlaceholder, { color: colors.textMuted }]}>
+              {department || t("emergency.selectDept")}
             </Text>
-            <Feather name="chevron-down" size={16} color="#93b5b6" />
+            <Feather name="chevron-down" size={16} color={colors.textMuted} />
           </Pressable>
           {renderPicker(DEPARTMENTS, showDeptPicker, setShowDeptPicker, (v) => {
             setDepartment(v);
@@ -158,22 +162,22 @@ export default function NewEmergencyScreen() {
           })}
 
           <Pressable
-            style={[styles.dropdown, !department && styles.dropdownDisabled]}
+            style={[styles.dropdown, { backgroundColor: colors.card, borderColor: colors.border }, !department && styles.dropdownDisabled]}
             onPress={() => department && setShowRoomPicker(!showRoomPicker)}
           >
-            <Text style={room ? styles.dropdownValue : styles.dropdownPlaceholder}>
-              {room || "Select room"}
+            <Text style={room ? [styles.dropdownValue, { color: colors.text }] : [styles.dropdownPlaceholder, { color: colors.textMuted }]}>
+              {room || t("emergency.selectRoom")}
             </Text>
-            <Feather name="chevron-down" size={16} color="#93b5b6" />
+            <Feather name="chevron-down" size={16} color={colors.textMuted} />
           </Pressable>
           {renderPicker(ROOMS, showRoomPicker, setShowRoomPicker, setRoom)}
         </View>
 
-        <Text style={styles.sectionLabel}>NOTES</Text>
+        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t("emergency.notes")}</Text>
         <TextInput
-          style={styles.notesInput}
-          placeholder="Additional details..."
-          placeholderTextColor="#93b5b6"
+          style={[styles.notesInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
+          placeholder={t("emergency.notesPlaceholder")}
+          placeholderTextColor={colors.textMuted}
           value={notes}
           onChangeText={setNotes}
           multiline
@@ -187,7 +191,7 @@ export default function NewEmergencyScreen() {
           disabled={!selectedCode}
         >
           <Feather name="alert-triangle" size={18} color="#ffffff" />
-          <Text style={styles.activateText}>Activate alert</Text>
+          <Text style={styles.activateText}>{t("emergency.activate")}</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -197,10 +201,8 @@ export default function NewEmergencyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f5f5",
   },
   header: {
-    backgroundColor: "#2daaae",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -210,7 +212,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontFamily: "Inter_500Medium",
-    color: "#ffffff",
   },
   closeBtn: {
     width: 32,
@@ -227,7 +228,6 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 10,
     fontFamily: "Inter_500Medium",
-    color: "#93b5b6",
     letterSpacing: 0.5,
     marginTop: 8,
     marginBottom: 4,
@@ -244,13 +244,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(45,170,174,0.2)",
-    backgroundColor: "#ffffff",
   },
   codePillText: {
     fontSize: 12,
     fontFamily: "Inter_500Medium",
-    color: "#4a7072",
   },
   fieldGroup: {
     gap: 10,
@@ -261,10 +258,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 48,
-    backgroundColor: "#ffffff",
     borderRadius: 12,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.2)",
     paddingHorizontal: 14,
   },
   dropdownDisabled: {
@@ -272,42 +267,33 @@ const styles = StyleSheet.create({
   },
   dropdownPlaceholder: {
     fontSize: 14,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   dropdownValue: {
     fontSize: 14,
-    color: "#0d2526",
     fontFamily: "Inter_500Medium",
   },
   pickerList: {
-    backgroundColor: "#ffffff",
     borderRadius: 12,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.13)",
     overflow: "hidden",
   },
   pickerItem: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 0.5,
-    borderBottomColor: "rgba(45,170,174,0.08)",
   },
   pickerItemText: {
     fontSize: 14,
-    color: "#0d2526",
     fontFamily: "Inter_400Regular",
   },
   notesInput: {
-    backgroundColor: "#ffffff",
     borderRadius: 12,
     borderWidth: 0.5,
-    borderColor: "rgba(45,170,174,0.2)",
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
     fontFamily: "Inter_400Regular",
-    color: "#0d2526",
     minHeight: 100,
     marginBottom: 16,
   },

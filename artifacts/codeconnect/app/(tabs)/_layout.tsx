@@ -5,44 +5,46 @@ import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View, useColorScheme } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+
+import { useApp } from "@/contexts/AppContext";
 
 function NativeTabLayout() {
+  const { t } = useApp();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>Home</Label>
+        <Label>{t("tabs.home")}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="alerts">
         <Icon sf={{ default: "bell", selected: "bell.fill" }} />
-        <Label>Alerts</Label>
+        <Label>{t("tabs.alerts")}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <Icon sf={{ default: "person", selected: "person.fill" }} />
-        <Label>Profile</Label>
+        <Label>{t("tabs.profile")}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
 }
 
 function ClassicTabLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { isDark, colors, t } = useApp();
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#2daaae",
-        tabBarInactiveTintColor: "#93b5b6",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: isIOS ? "transparent" : "#ffffff",
+          backgroundColor: isIOS ? "transparent" : colors.card,
           borderTopWidth: 0.5,
-          borderTopColor: "rgba(45,170,174,0.13)",
+          borderTopColor: colors.border,
           elevation: 0,
           ...(isWeb ? { height: 84 } : {}),
         },
@@ -57,7 +59,7 @@ function ClassicTabLayout() {
             <View
               style={[
                 StyleSheet.absoluteFill,
-                { backgroundColor: "#ffffff" },
+                { backgroundColor: colors.card },
               ]}
             />
           ) : null,
@@ -70,7 +72,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t("tabs.home"),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="house" tintColor={color} size={22} />
@@ -82,7 +84,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="alerts"
         options={{
-          title: "Alerts",
+          title: t("tabs.alerts"),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="bell" tintColor={color} size={22} />
@@ -96,7 +98,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: t("tabs.profile"),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="person" tintColor={color} size={22} />

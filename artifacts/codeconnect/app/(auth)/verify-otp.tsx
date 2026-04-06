@@ -10,11 +10,14 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useApp } from "@/contexts/AppContext";
+
 export default function VerifyOTPScreen() {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [countdown, setCountdown] = useState(59);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const insets = useSafeAreaInsets();
+  const { colors } = useApp();
 
   useEffect(() => {
     if (countdown > 0) {
@@ -43,17 +46,17 @@ export default function VerifyOTPScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
-      <Pressable style={styles.backBtn} onPress={() => router.back()}>
-        <Feather name="arrow-left" size={22} color="#0d2526" />
+    <View style={[styles.container, { paddingTop: insets.top + 20, backgroundColor: colors.card }]}>
+      <Pressable style={[styles.backBtn, { backgroundColor: colors.inputBg }]} onPress={() => router.back()}>
+        <Feather name="arrow-left" size={22} color={colors.text} />
       </Pressable>
 
       <View style={styles.content}>
-        <View style={styles.iconCircle}>
-          <Feather name="shield" size={28} color="#2daaae" />
+        <View style={[styles.iconCircle, { backgroundColor: colors.primaryLight }]}>
+          <Feather name="shield" size={28} color={colors.primary} />
         </View>
-        <Text style={styles.title}>Verify your identity</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.text }]}>Verify your identity</Text>
+        <Text style={[styles.subtitle, { color: colors.textMuted }]}>
           Enter the 6-digit code sent to your registered email
         </Text>
 
@@ -62,7 +65,11 @@ export default function VerifyOTPScreen() {
             <TextInput
               key={index}
               ref={(ref) => { inputRefs.current[index] = ref; }}
-              style={[styles.otpInput, digit ? styles.otpFilled : null]}
+              style={[
+                styles.otpInput,
+                { borderColor: colors.border, color: colors.text, backgroundColor: colors.inputBg },
+                digit ? { borderColor: colors.primary, backgroundColor: colors.primaryLight } : null,
+              ]}
               value={digit}
               onChangeText={(text) => handleChange(text, index)}
               onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
@@ -78,12 +85,12 @@ export default function VerifyOTPScreen() {
         </Pressable>
 
         <View style={styles.resendRow}>
-          <Text style={styles.resendLabel}>Didn't receive the code? </Text>
+          <Text style={[styles.resendLabel, { color: colors.textMuted }]}>Didn't receive the code? </Text>
           {countdown > 0 ? (
-            <Text style={styles.countdown}>Resend in {countdown}s</Text>
+            <Text style={[styles.countdown, { color: colors.textSecondary }]}>Resend in {countdown}s</Text>
           ) : (
             <Pressable onPress={() => setCountdown(59)}>
-              <Text style={styles.resendLink}>Resend code</Text>
+              <Text style={[styles.resendLink, { color: colors.primary }]}>Resend code</Text>
             </Pressable>
           )}
         </View>
@@ -95,14 +102,12 @@ export default function VerifyOTPScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
     paddingHorizontal: 24,
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#f0f5f5",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 24,
@@ -115,7 +120,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#e4f7f7",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
@@ -123,12 +127,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontFamily: "Inter_500Medium",
-    color: "#0d2526",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 13,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
     textAlign: "center",
     marginBottom: 32,
@@ -144,16 +146,9 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(45,170,174,0.2)",
     textAlign: "center",
     fontSize: 20,
     fontFamily: "Inter_600SemiBold",
-    color: "#0d2526",
-    backgroundColor: "#f8fafa",
-  },
-  otpFilled: {
-    borderColor: "#2daaae",
-    backgroundColor: "#e4f7f7",
   },
   verifyButton: {
     height: 48,
@@ -175,17 +170,14 @@ const styles = StyleSheet.create({
   },
   resendLabel: {
     fontSize: 13,
-    color: "#93b5b6",
     fontFamily: "Inter_400Regular",
   },
   countdown: {
     fontSize: 13,
-    color: "#4a7072",
     fontFamily: "Inter_500Medium",
   },
   resendLink: {
     fontSize: 13,
-    color: "#2daaae",
     fontFamily: "Inter_500Medium",
   },
 });

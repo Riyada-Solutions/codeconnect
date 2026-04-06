@@ -13,13 +13,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { lightTheme, darkTheme } from "@/constants/theme";
 import { useApp } from "@/contexts/AppContext";
 
 export default function ChangePasswordScreen() {
   const insets = useSafeAreaInsets();
-  const { isDark } = useApp();
-  const colors = isDark ? darkTheme : lightTheme;
+  const { colors, t } = useApp();
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -47,7 +45,7 @@ export default function ChangePasswordScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.back()}>
           <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.heroText }]}>Change Password</Text>
+        <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("changePassword.title")}</Text>
         <View style={{ width: 32 }} />
       </View>
 
@@ -57,7 +55,7 @@ export default function ChangePasswordScreen() {
       >
         <View style={[styles.card, { backgroundColor: colors.card }]}>
           <View style={styles.fieldGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>Current Password</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t("changePassword.current")}</Text>
             <View style={[styles.inputRow, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
               <Feather name="lock" size={16} color={colors.textMuted} />
               <TextInput
@@ -75,7 +73,7 @@ export default function ChangePasswordScreen() {
           </View>
 
           <View style={styles.fieldGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>New Password</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t("changePassword.new")}</Text>
             <View style={[styles.inputRow, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
               <Feather name="lock" size={16} color={colors.textMuted} />
               <TextInput
@@ -93,7 +91,7 @@ export default function ChangePasswordScreen() {
           </View>
 
           <View style={styles.fieldGroup}>
-            <Text style={[styles.label, { color: colors.text }]}>Confirm New Password</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t("changePassword.confirm")}</Text>
             <View style={[styles.inputRow, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
               <Feather name="lock" size={16} color={colors.textMuted} />
               <TextInput
@@ -111,7 +109,7 @@ export default function ChangePasswordScreen() {
           </View>
 
           <Pressable style={styles.saveBtn} onPress={handleSave}>
-            <Text style={styles.saveBtnText}>Update Password</Text>
+            <Text style={styles.saveBtnText}>{t("changePassword.update")}</Text>
           </Pressable>
         </View>
       </ScrollView>
