@@ -6,86 +6,167 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useApp } from "@/contexts/AppContext";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
   const insets = useSafeAreaInsets();
-  const { colors } = useApp();
+  const { colors, t } = useApp();
+  const topPad = Platform.OS === "web" ? 67 : insets.top;
+
+  const buttonScale = useSharedValue(1);
+  const buttonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }],
+  }));
 
   const handleLogin = () => {
-    router.replace("/(auth)/verify-otp");
+    const newErrors: { username?: string; password?: string } = {};
+    if (!username.trim()) newErrors.username = t("login.usernameRequired");
+    if (!password.trim()) newErrors.password = t("login.passwordRequired");
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      router.replace("/(auth)/verify-otp");
+    }, 800);
   };
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.card }]}
+      style={[styles.container, { backgroundColor: colors.hero }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={[styles.heroSection, { paddingTop: insets.top + 40, backgroundColor: colors.hero }]}>
-        <View style={styles.decorCircle1} />
-        <View style={styles.decorCircle2} />
-        <View style={styles.logoCircle}>
-          <Image
-            source={require("@/assets/images/logo.jpeg")}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
-        </View>
-        <Text style={styles.logoText}>CodeConnect</Text>
-      </View>
+      <ScrollView
+        contentContainerStyle={[styles.scroll, { paddingTop: topPad + 40, paddingBottom: insets.bottom + 24 }]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Animated.View entering={FadeInUp.duration(500)} style={styles.brandContainer}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoPulse} />
+            <View style={styles.logoCircle}>
+              <Image
+                source={require("@/assets/images/logo.jpeg")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+          <Text style={styles.brandName}>CodeConnect</Text>
+          <Text style={styles.brandSubtitle}>{t("login.platformSubtitle")}</Text>
+        </Animated.View>
 
-      <View style={styles.formSection}>
-        <Text style={[styles.welcome, { color: colors.text }]}>Welcome back</Text>
-        <Text style={[styles.subtitle, { color: colors.textMuted }]}>Sign in to your account</Text>
+        <Animated.View entering={FadeInDown.delay(200).duration(500)} style={[styles.card, { backgroundColor: colors.card }]}>
+          <Text style={[styles.title, { color: colors.text }]}>{t("login.welcome")}</Text>
+          <Text style={[styles.subtitle, { color: colors.textMuted }]}>{t("login.signInSubtitle")}</Text>
 
-        <View style={styles.inputGroup}>
-          <View style={[styles.inputContainer, { borderColor: colors.border, backgroundColor: colors.inputBg }]}>
-            <Feather name="mail" size={18} color={colors.textMuted} style={styles.inputIcon} />
-            <TextInput
-              style={[styles.input, { color: colors.text }]}
-              placeholder="Email address"
-              placeholderTextColor={colors.textMuted}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+          <View style={styles.fieldContainer}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>{t("login.username")}</Text>
+            <View style={[
+              styles.inputWrapper,
+              { backgroundColor: colors.inputBg, borderColor: colors.border },
+              errors.username && styles.inputError,
+            ]}>
+              <Feather name="user" size={18} color={colors.textMuted} />
+              <TextInput
+                style={[styles.input, { color: colors.text }]}
+                value={username}
+                onChangeText={(v) => { setUsername(v); setErrors((e) => ({ ...e, username: undefined })); }}
+                placeholder={t("login.enterUsername")}
+                placeholderTextColor={colors.textMuted}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
           </View>
 
-          <View style={[styles.inputContainer, { borderColor: colors.border, backgroundColor: colors.inputBg }]}>
-            <Feather name="lock" size={18} color={colors.textMuted} style={styles.inputIcon} />
-            <TextInput
-              style={[styles.input, { color: colors.text }]}
-              placeholder="Password"
-              placeholderTextColor={colors.textMuted}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-            />
-            <Pressable onPress={() => setShowPassword(!showPassword)}>
-              <Feather name={showPassword ? "eye-off" : "eye"} size={18} color={colors.textMuted} />
-            </Pressable>
+          <View style={styles.fieldContainer}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>{t("login.password")}</Text>
+            <View style={[
+              styles.inputWrapper,
+              { backgroundColor: colors.inputBg, borderColor: colors.border },
+              errors.password && styles.inputError,
+            ]}>
+              <Feather name="lock" size={18} color={colors.textMuted} />
+              <TextInput
+                style={[styles.input, { color: colors.text }]}
+                value={password}
+                onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined })); }}
+                placeholder={t("login.enterPassword")}
+                placeholderTextColor={colors.textMuted}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <Pressable onPress={() => setShowPassword((v) => !v)}>
+                <Feather name={showPassword ? "eye-off" : "eye"} size={18} color={colors.textMuted} />
+              </Pressable>
+            </View>
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
           </View>
-        </View>
 
-        <Pressable style={styles.signInButton} onPress={handleLogin}>
-          <Text style={styles.signInText}>Sign In</Text>
-        </Pressable>
+          <Pressable onPress={() => router.push("/(auth)/forgot-password")} style={styles.forgotBtn}>
+            <Text style={[styles.forgotText, { color: colors.primary }]}>{t("login.forgotPassword")}</Text>
+          </Pressable>
 
-        <Pressable style={styles.forgotContainer}>
-          <Text style={[styles.forgotText, { color: colors.primary }]}>Forgot password?</Text>
-        </Pressable>
-      </View>
+          <AnimatedPressable
+            style={[styles.button, buttonStyle, loading && styles.buttonDisabled]}
+            onPressIn={() => { buttonScale.value = withSpring(0.97); }}
+            onPressOut={() => { buttonScale.value = withSpring(1); }}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            <View style={styles.buttonInner}>
+              {loading ? (
+                <Text style={styles.buttonText}>{t("login.signingIn")}</Text>
+              ) : (
+                <>
+                  <Text style={styles.buttonText}>{t("login.signIn")}</Text>
+                  <Feather name="arrow-right" size={18} color="#fff" />
+                </>
+              )}
+            </View>
+          </AnimatedPressable>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(400).duration(500)} style={styles.registerRow}>
+          <Text style={styles.registerText}>{t("login.dontHaveAccount")} </Text>
+          <Pressable onPress={() => router.push("/(auth)/register")}>
+            <Text style={styles.registerLink}>{t("login.createAccount")}</Text>
+          </Pressable>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(500).duration(400)} style={styles.footer}>
+          <Feather name="shield" size={12} color="rgba(255,255,255,0.4)" />
+          <Text style={styles.footerText}>{t("login.secureData")}</Text>
+        </Animated.View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -94,101 +175,168 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  heroSection: {
+  scroll: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    minHeight: "100%",
+  },
+  brandContainer: {
     alignItems: "center",
-    paddingBottom: 40,
-    overflow: "hidden",
+    marginBottom: 40,
   },
-  decorCircle1: {
-    position: "absolute",
-    top: -40,
-    right: -40,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(255,255,255,0.08)",
-  },
-  decorCircle2: {
-    position: "absolute",
-    top: 20,
-    right: 0,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "rgba(255,255,255,0.05)",
+  logoContainer: {
+    position: "relative",
+    marginBottom: 16,
   },
   logoCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
     overflow: "hidden",
   },
+  logoPulse: {
+    position: "absolute",
+    top: -8,
+    left: -8,
+    right: -8,
+    bottom: -8,
+    borderRadius: 48,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
   logoImage: {
-    width: 48,
-    height: 48,
+    width: 52,
+    height: 52,
   },
-  logoText: {
-    fontSize: 20,
-    fontFamily: "Inter_500Medium",
-    color: "#ffffff",
+  brandName: {
+    fontSize: 28,
+    fontFamily: "Inter_700Bold",
+    color: "#fff",
+    letterSpacing: -0.5,
   },
-  formSection: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 32,
+  brandSubtitle: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.5)",
+    fontFamily: "Inter_400Regular",
+    marginTop: 4,
   },
-  welcome: {
+  card: {
+    borderRadius: 24,
+    padding: 28,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.15,
+    shadowRadius: 40,
+    elevation: 20,
+  },
+  title: {
     fontSize: 24,
-    fontFamily: "Inter_500Medium",
-    marginBottom: 4,
+    fontFamily: "Inter_700Bold",
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
     fontFamily: "Inter_400Regular",
-    marginBottom: 32,
+    marginBottom: 28,
   },
-  inputGroup: {
-    gap: 16,
-    marginBottom: 24,
+  fieldContainer: {
+    marginBottom: 18,
   },
-  inputContainer: {
+  label: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+    marginBottom: 8,
+  },
+  inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    height: 48,
-    borderWidth: 0.5,
     borderRadius: 12,
+    borderWidth: 1.5,
     paddingHorizontal: 14,
+    paddingVertical: 13,
+    gap: 10,
   },
-  inputIcon: {
-    marginRight: 10,
+  inputError: {
+    borderColor: "#ef4444",
+    backgroundColor: "#fef2f2",
   },
   input: {
     flex: 1,
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-  },
-  signInButton: {
-    height: 48,
-    backgroundColor: "#2daaae",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  signInText: {
     fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
+    fontFamily: "Inter_400Regular",
+    padding: 0,
   },
-  forgotContainer: {
-    alignItems: "center",
-    marginTop: 16,
+  errorText: {
+    fontSize: 12,
+    color: "#ef4444",
+    fontFamily: "Inter_400Regular",
+    marginTop: 4,
+  },
+  forgotBtn: {
+    alignSelf: "flex-end",
+    marginTop: -8,
+    marginBottom: 4,
   },
   forgotText: {
     fontSize: 13,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Inter_600SemiBold",
+  },
+  button: {
+    borderRadius: 14,
+    overflow: "hidden",
+    marginTop: 8,
+    backgroundColor: "#2daaae",
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  buttonInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    gap: 8,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontFamily: "Inter_600SemiBold",
+    color: "#fff",
+  },
+  registerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  registerText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    color: "rgba(255,255,255,0.6)",
+  },
+  registerLink: {
+    fontSize: 14,
+    fontFamily: "Inter_600SemiBold",
+    color: "#fff",
+  },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+    gap: 6,
+  },
+  footerText: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.4)",
+    fontFamily: "Inter_400Regular",
   },
 });

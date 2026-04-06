@@ -26,7 +26,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Brand Color**: #2daaae (teal)
 - **Features**:
   - Splash screen with animated logo
-  - Login + OTP verification auth flow
+  - Full auth flow: Login, Register, Forgot Password, OTP Verification, New Password, Verify OTP
   - Home screen with emergency code list cards and active requests
   - Alerts screen with filterable alert list
   - Profile screen with colored-icon menu rows

@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -14,54 +14,40 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useApp } from "@/contexts/AppContext";
 
-export default function VerifyOTPScreen() {
-  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
-  const [countdown, setCountdown] = useState(59);
-  const inputRefs = useRef<(TextInput | null)[]>([]);
+export default function OtpScreen() {
   const insets = useSafeAreaInsets();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
   const { colors, t } = useApp();
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
+  const inputs = useRef<(TextInput | null)[]>([]);
 
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
-
-  const handleChange = (text: string, index: number) => {
+  function handleOtpChange(text: string, index: number) {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
-    if (text && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
+    if (text && index < 5) inputs.current[index + 1]?.focus();
+  }
 
-  const handleKeyPress = (key: string, index: number) => {
-    if (key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleVerify = () => {
+  function handleVerify() {
     const code = otp.join("");
     if (code.length < 6) return;
-    router.replace("/(tabs)");
-  };
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/(auth)/new-password");
+    }, 800);
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: topPad + 12 }]}>
       <View style={styles.header}>
-        <Pressable
-          style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-          onPress={() => router.back()}
-        >
+        <Pressable onPress={() => router.back()} style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Feather name="arrow-left" size={20} color={colors.text} />
         </Pressable>
         <View style={styles.headerCenter}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>{t("verifyOtp.title")}</Text>
-          <Text style={[styles.headerSub, { color: colors.textSecondary }]}>{t("verifyOtp.subtitle")}</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{t("otp.title")}</Text>
+          <Text style={[styles.headerSub, { color: colors.textSecondary }]}>{t("otp.enterSixDigit")}</Text>
         </View>
       </View>
 
@@ -70,46 +56,45 @@ export default function VerifyOTPScreen() {
           <View style={[styles.iconCircle, { backgroundColor: colors.primaryLight }]}>
             <Feather name="shield" size={32} color={colors.primary} />
           </View>
-          <Text style={[styles.cardTitle, { color: colors.text }]}>{t("verifyOtp.verifyIdentity")}</Text>
-          <Text style={[styles.cardSub, { color: colors.textSecondary }]}>{t("verifyOtp.enterCode")}</Text>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>{t("otp.verifyCode")}</Text>
+          <Text style={[styles.cardSub, { color: colors.textSecondary }]}>{t("otp.verifyCodeDesc")}</Text>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(200).duration(400)} style={[styles.formCard, { backgroundColor: colors.card }]}>
           <View style={styles.otpRow}>
-            {otp.map((digit, index) => (
+            {otp.map((digit, i) => (
               <TextInput
-                key={index}
-                ref={(ref) => { inputRefs.current[index] = ref; }}
+                key={i}
+                ref={(ref) => { inputs.current[i] = ref; }}
                 style={[
                   styles.otpInput,
-                  { borderColor: colors.border, color: colors.text, backgroundColor: colors.inputBg },
+                  { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text },
                   digit ? { borderColor: colors.primary, backgroundColor: colors.primaryLight, color: colors.primary } : null,
                 ]}
                 value={digit}
-                onChangeText={(text) => handleChange(text, index)}
-                onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
+                onChangeText={(text) => handleOtpChange(text.slice(-1), i)}
                 keyboardType="number-pad"
                 maxLength={1}
-                selectTextOnFocus
+                onKeyPress={({ nativeEvent }) => {
+                  if (nativeEvent.key === "Backspace" && !digit && i > 0) inputs.current[i - 1]?.focus();
+                }}
               />
             ))}
           </View>
 
-          <Pressable style={styles.verifyButton} onPress={handleVerify}>
-            <Text style={styles.verifyText}>{t("verifyOtp.verify")}</Text>
+          <Pressable style={styles.verifyBtn} onPress={handleVerify} disabled={loading}>
+            <Text style={styles.verifyBtnText}>
+              {loading ? t("register.loading") : t("otp.verifyAndContinue")}
+            </Text>
           </Pressable>
 
-          <View style={styles.resendRow}>
-            <Text style={[styles.resendLabel, { color: colors.textMuted }]}>{t("verifyOtp.didntReceive")} </Text>
-            {countdown > 0 ? (
-              <Text style={[styles.countdown, { color: colors.textSecondary }]}>
-                {t("verifyOtp.resendIn")} {countdown}s
-              </Text>
-            ) : (
-              <Pressable onPress={() => setCountdown(59)}>
-                <Text style={[styles.resendLink, { color: colors.primary }]}>{t("verifyOtp.resendCode")}</Text>
-              </Pressable>
-            )}
+          <View style={styles.bottomRow}>
+            <Pressable>
+              <Text style={[styles.resendText, { color: colors.primary }]}>{t("otp.resendCode")}</Text>
+            </Pressable>
+            <Pressable onPress={() => router.back()}>
+              <Text style={[styles.backText, { color: colors.textSecondary }]}>{t("otp.backToPrevious")}</Text>
+            </Pressable>
           </View>
         </Animated.View>
       </View>
@@ -118,10 +103,7 @@ export default function VerifyOTPScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
+  container: { flex: 1, paddingHorizontal: 20 },
   header: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -165,7 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     lineHeight: 21,
-    paddingHorizontal: 8,
   },
   formCard: {
     borderRadius: 20,
@@ -191,34 +172,21 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_700Bold",
     fontSize: 20,
   },
-  verifyButton: {
-    height: 52,
-    width: "100%",
+  verifyBtn: {
     backgroundColor: "#2daaae",
     borderRadius: 16,
+    paddingVertical: 16,
     alignItems: "center",
-    justifyContent: "center",
   },
-  verifyText: {
+  verifyBtnText: {
+    fontFamily: "Inter_600SemiBold",
     fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
+    color: "#fff",
   },
-  resendRow: {
+  bottomRow: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
-  resendLabel: {
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
-  },
-  countdown: {
-    fontSize: 13,
-    fontFamily: "Inter_500Medium",
-  },
-  resendLink: {
-    fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
-  },
+  resendText: { fontFamily: "Inter_600SemiBold", fontSize: 14 },
+  backText: { fontFamily: "Inter_400Regular", fontSize: 14 },
 });
