@@ -46,7 +46,18 @@ export default function NewEmergencyScreen() {
         {
           text: t("emergency.activate"),
           style: "destructive",
-          onPress: () => router.back(),
+          onPress: () => {
+            router.replace({
+              pathname: "/incoming-alert",
+              params: {
+                code: selectedCode,
+                building: building,
+                floor: floor,
+                room: room,
+                department: department,
+              },
+            });
+          },
         },
       ]
     );

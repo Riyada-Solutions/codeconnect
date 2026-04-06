@@ -35,6 +35,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
   - Settings with dark mode toggle and EN/AR language selector
   - Help & Support screen (WhatsApp/Facebook/Email + message form)
   - Change Password screen
+  - Incoming Emergency Alert screen (notification to doctors after request creation)
   - Shared screens: Privacy Policy, Terms of Service, About, Notifications, Edit Profile
   - Full dark mode support across all screens
   - Full EN/AR bilingual translation system

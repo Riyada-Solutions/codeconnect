@@ -35,6 +35,7 @@ function RootLayoutNav() {
       <Stack.Screen name="about" />
       <Stack.Screen name="help-support" />
       <Stack.Screen name="change-password" />
+      <Stack.Screen name="incoming-alert" options={{ presentation: "fullScreenModal", animation: "fade" }} />
     </Stack>
   );
 }

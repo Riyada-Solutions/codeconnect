@@ -111,6 +111,14 @@ const translations: Record<string, Record<Language, string>> = {
   "changePassword.new": { en: "New Password", ar: "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0627\u0644\u062c\u062f\u064a\u062f\u0629" },
   "changePassword.confirm": { en: "Confirm New Password", ar: "\u062a\u0623\u0643\u064a\u062f \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" },
   "changePassword.update": { en: "Update Password", ar: "\u062a\u062d\u062f\u064a\u062b \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631" },
+  "incoming.incomingAlert": { en: "Incoming Emergency Alert", ar: "\u062a\u0646\u0628\u064a\u0647 \u0637\u0648\u0627\u0631\u0626 \u0648\u0627\u0631\u062f" },
+  "incoming.timeElapsed": { en: "Time Elapsed", ar: "\u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0646\u0642\u0636\u064a" },
+  "incoming.locationDetails": { en: "LOCATION DETAILS", ar: "\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0645\u0648\u0642\u0639" },
+  "incoming.floorRoom": { en: "Floor & Room", ar: "\u0627\u0644\u0637\u0627\u0628\u0642 \u0648\u0627\u0644\u063a\u0631\u0641\u0629" },
+  "incoming.reject": { en: "Reject", ar: "\u0631\u0641\u0636" },
+  "incoming.accept": { en: "Accept", ar: "\u0642\u0628\u0648\u0644" },
+  "incoming.quickResponse": { en: "Quick response saves lives", ar: "\u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0627\u0644\u0633\u0631\u064a\u0639\u0629 \u062a\u0646\u0642\u0630 \u0627\u0644\u0623\u0631\u0648\u0627\u062d" },
+  "incoming.pleaseRespond": { en: "Please respond to this emergency alert", ar: "\u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0644\u0647\u0630\u0627 \u0627\u0644\u062a\u0646\u0628\u064a\u0647 \u0627\u0644\u0637\u0627\u0631\u0626" },
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
