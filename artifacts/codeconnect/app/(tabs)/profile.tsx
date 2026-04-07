@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
+import CustomButton from "@/components/ui/CustomButton";
 import { mockUser } from "@/constants/mockData";
 import { useApp } from "@/contexts/AppContext";
 import type { ThemeColors } from "@/constants/theme";
@@ -145,10 +146,12 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <Pressable style={[styles.logoutBtn, { backgroundColor: colors.card, borderColor: "#fecaca" }]} onPress={handleLogout}>
-          <Feather name="log-out" size={18} color="#ef4444" />
-          <Text style={styles.logoutText}>{t("profile.logout")}</Text>
-        </Pressable>
+        <CustomButton onPress={handleLogout} color={colors.card} borderColor="#fecaca" height={50} radius={14}>
+          <View style={styles.logoutInner}>
+            <Feather name="log-out" size={18} color="#ef4444" />
+            <Text style={styles.logoutText}>{t("profile.logout")}</Text>
+          </View>
+        </CustomButton>
       </ScrollView>
     </View>
   );
@@ -240,14 +243,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter_500Medium",
   },
-  logoutBtn: {
+  logoutInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    height: 50,
-    borderRadius: 14,
-    borderWidth: 1,
   },
   logoutText: {
     fontSize: 14,

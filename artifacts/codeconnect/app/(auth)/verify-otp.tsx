@@ -1,7 +1,8 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  BackHandler,
   Platform,
   Pressable,
   StyleSheet,
@@ -12,15 +13,32 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 
+const OTP_LEN = 4;
+
 export default function VerifyOTPScreen() {
-  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState<string[]>(() => Array(OTP_LEN).fill(""));
   const [countdown, setCountdown] = useState(59);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const insets = useSafeAreaInsets();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
   const { colors, t } = useApp();
+
+  const goBack = useCallback(() => {
+    if (router.canGoBack()) router.back();
+    else router.replace("/(auth)/login");
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
+    return () => sub.remove();
+  }, [goBack]);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -29,24 +47,59 @@ export default function VerifyOTPScreen() {
     }
   }, [countdown]);
 
-  const handleChange = (text: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-    if (text && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+  function handleChange(text: string, index: number) {
+    if (text === "") {
+      setOtp((prev) => {
+        const next = [...prev];
+        next[index] = "";
+        return next;
+      });
+      return;
     }
-  };
 
-  const handleKeyPress = (key: string, index: number) => {
-    if (key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    const digits = text.replace(/\D/g, "");
+    if (!digits.length) return;
+
+    setOtp((prev) => {
+      const next = [...prev];
+
+      if (digits.length > 1) {
+        let writeAt = index;
+        for (const ch of digits) {
+          if (writeAt >= OTP_LEN) break;
+          next[writeAt] = ch;
+          writeAt += 1;
+        }
+        const focusIdx = Math.min(writeAt, OTP_LEN - 1);
+        setTimeout(() => inputRefs.current[focusIdx]?.focus(), 0);
+        return next;
+      }
+
+      next[index] = digits[digits.length - 1]!;
+      if (index < OTP_LEN - 1) {
+        setTimeout(() => inputRefs.current[index + 1]?.focus(), 0);
+      }
+      return next;
+    });
+  }
+
+  function handleKeyPress(key: string, index: number, digit: string) {
+    if (key !== "Backspace") return;
+    if (digit) {
+      handleChange("", index);
+    } else if (index > 0) {
+      setOtp((prev) => {
+        const next = [...prev];
+        next[index - 1] = "";
+        return next;
+      });
+      setTimeout(() => inputRefs.current[index - 1]?.focus(), 0);
     }
-  };
+  }
 
   const handleVerify = () => {
     const code = otp.join("");
-    if (code.length < 6) return;
+    if (code.length < OTP_LEN) return;
     router.replace("/(tabs)");
   };
 
@@ -55,7 +108,7 @@ export default function VerifyOTPScreen() {
       <View style={styles.header}>
         <Pressable
           style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-          onPress={() => router.back()}
+          onPress={goBack}
         >
           <Feather name="arrow-left" size={20} color={colors.text} />
         </Pressable>
@@ -79,7 +132,9 @@ export default function VerifyOTPScreen() {
             {otp.map((digit, index) => (
               <TextInput
                 key={index}
-                ref={(ref) => { inputRefs.current[index] = ref; }}
+                ref={(ref) => {
+                  inputRefs.current[index] = ref;
+                }}
                 style={[
                   styles.otpInput,
                   { borderColor: colors.border, color: colors.text, backgroundColor: colors.inputBg },
@@ -87,17 +142,22 @@ export default function VerifyOTPScreen() {
                 ]}
                 value={digit}
                 onChangeText={(text) => handleChange(text, index)}
-                onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
+                onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index, digit)}
                 keyboardType="number-pad"
-                maxLength={1}
+                maxLength={OTP_LEN}
                 selectTextOnFocus
               />
             ))}
           </View>
 
-          <Pressable style={styles.verifyButton} onPress={handleVerify}>
-            <Text style={styles.verifyText}>{t("verifyOtp.verify")}</Text>
-          </Pressable>
+          <CustomButton
+            title={t("verifyOtp.verify")}
+            onPress={handleVerify}
+            widerPadding
+            height={52}
+            radius={16}
+            style={styles.verifyButtonShadow}
+          />
 
           <View style={styles.resendRow}>
             <Text style={[styles.resendLabel, { color: colors.textMuted }]}>{t("verifyOtp.didntReceive")} </Text>
@@ -191,18 +251,12 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_700Bold",
     fontSize: 20,
   },
-  verifyButton: {
-    height: 52,
-    width: "100%",
-    backgroundColor: "#2daaae",
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  verifyText: {
-    fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
+  verifyButtonShadow: {
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
   },
   resendRow: {
     flexDirection: "row",

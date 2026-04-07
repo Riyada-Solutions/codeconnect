@@ -14,6 +14,7 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 
 export default function ForgotPasswordScreen() {
@@ -75,11 +76,15 @@ export default function ForgotPasswordScreen() {
             />
           </View>
 
-          <Pressable style={styles.sendBtn} onPress={handleSendOtp} disabled={loading}>
-            <Text style={styles.sendBtnText}>
-              {loading ? t("register.loading") : t("forgot.sendResetLink")}
-            </Text>
-          </Pressable>
+          <CustomButton
+            title={t("forgot.sendResetLink")}
+            onPress={handleSendOtp}
+            loading={loading}
+            widerPadding
+            height={52}
+            radius={16}
+            style={styles.sendBtnShadow}
+          />
         </Animated.View>
 
         <Pressable onPress={() => router.back()} style={styles.backLink}>
@@ -162,16 +167,12 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: 15,
   },
-  sendBtn: {
-    backgroundColor: "#2daaae",
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  sendBtnText: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 16,
-    color: "#fff",
+  sendBtnShadow: {
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
   },
   backLink: { marginTop: 16, alignItems: "center" },
   backLinkText: {

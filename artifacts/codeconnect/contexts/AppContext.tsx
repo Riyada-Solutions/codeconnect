@@ -12,8 +12,10 @@ interface AppContextType {
   theme: Theme;
   isDark: boolean;
   colors: ThemeColors;
+  biometricLoginEnabled: boolean;
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
+  setBiometricLoginEnabled: (enabled: boolean) => void;
   toggleTheme: () => void;
   t: (key: string) => string;
 }
@@ -41,6 +43,12 @@ const translations: Record<string, Record<Language, string>> = {
   "settings.vibration": { en: "Vibration", ar: "\u0627\u0644\u0627\u0647\u062a\u0632\u0627\u0632" },
   "settings.emergency": { en: "Emergency", ar: "\u0627\u0644\u0637\u0648\u0627\u0631\u0626" },
   "settings.autoResponse": { en: "Auto-Response", ar: "\u0627\u0644\u0631\u062f \u0627\u0644\u062a\u0644\u0642\u0627\u0626\u064a" },
+  "settings.security": { en: "Security", ar: "\u0627\u0644\u0623\u0645\u0627\u0646" },
+  "settings.biometricLogin": { en: "Face ID", ar: "Face ID" },
+  "settings.biometricLoginHint": {
+    en: "Show Face ID or fingerprint sign-in on the login screen",
+    ar: "\u0639\u0631\u0636 \u0632\u0631 Face ID \u0623\u0648 \u0628\u0635\u0645\u0629 \u0627\u0644\u0625\u0635\u0628\u0639 \u0641\u064a \u0634\u0627\u0634\u0629 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644",
+  },
   "help.title": { en: "Help & Support", ar: "\u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629 \u0648\u0627\u0644\u062f\u0639\u0645" },
   "help.contactUs": { en: "Contact Us", ar: "\u0627\u062a\u0635\u0644 \u0628\u0646\u0627" },
   "help.whatsapp": { en: "WhatsApp", ar: "\u0648\u0627\u062a\u0633\u0627\u0628" },
@@ -90,9 +98,28 @@ const translations: Record<string, Record<Language, string>> = {
   "emergency.selectFloor": { en: "Select floor", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u0637\u0627\u0628\u0642" },
   "emergency.selectDept": { en: "Select department", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u0642\u0633\u0645" },
   "emergency.selectRoom": { en: "Select room", ar: "\u0627\u062e\u062a\u0631 \u0627\u0644\u063a\u0631\u0641\u0629" },
-  "emergency.notes": { en: "NOTES", ar: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a" },
-  "emergency.notesPlaceholder": { en: "Additional details...", ar: "\u062a\u0641\u0627\u0635\u064a\u0644 \u0625\u0636\u0627\u0641\u064a\u0629..." },
+  "emergency.notes": { en: "Notes", ar: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a" },
+  "emergency.notesPlaceholder": { en: "Additional information", ar: "\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0625\u0636\u0627\u0641\u064a\u0629" },
   "emergency.activate": { en: "Activate alert", ar: "\u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062a\u0646\u0628\u064a\u0647" },
+  "emergency.instruction": {
+    en: "Select your location to alert the emergency response team.",
+    ar: "\u062d\u062f\u062f \u0645\u0648\u0642\u0639\u0643 \u0644\u0625\u0631\u0633\u0627\u0644 \u062a\u0646\u0628\u064a\u0647 \u0625\u0644\u0649 \u0641\u0631\u064a\u0642 \u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0644\u0644\u0637\u0648\u0627\u0631\u0626.",
+  },
+  "emergency.sendAlert": {
+    en: "Send Alert to Response Team",
+    ar: "\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062a\u0646\u0628\u064a\u0647 \u0644\u0641\u0631\u064a\u0642 \u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629",
+  },
+  "emergency.sendFooter": {
+    en: "The assigned team will be notified immediately.",
+    ar: "\u0633\u064a\u062a\u0645 \u0625\u0634\u0639\u0627\u0631 \u0627\u0644\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0639\u064a\u0646 \u0641\u0648\u0631\u064b\u0627.",
+  },
+  "emergency.roomNumber": { en: "Room number", ar: "\u0631\u0642\u0645 \u0627\u0644\u063a\u0631\u0641\u0629" },
+  "emergency.roomPlaceholder": { en: "e.g., 305", ar: "\u0645\u062b\u0627\u0644\u064b\u0627\u060c 305" },
+  "emergency.titleFallback": { en: "Emergency alert", ar: "\u062a\u0646\u0628\u064a\u0647 \u0637\u0648\u0627\u0631\u0626" },
+  "emergency.pickCodeHint": {
+    en: "Choose an alert type below",
+    ar: "\u0627\u062e\u062a\u0631 \u0646\u0648\u0639 \u0627\u0644\u062a\u0646\u0628\u064a\u0647 \u0623\u062f\u0646\u0627\u0647",
+  },
   "editProfile.title": { en: "Edit Profile", ar: "\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u0644\u0641 \u0627\u0644\u0634\u062e\u0635\u064a" },
   "editProfile.fullName": { en: "Full Name", ar: "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644" },
   "editProfile.email": { en: "Email", ar: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" },
@@ -120,8 +147,8 @@ const translations: Record<string, Record<Language, string>> = {
   "incoming.quickResponse": { en: "Quick response saves lives", ar: "\u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0627\u0644\u0633\u0631\u064a\u0639\u0629 \u062a\u0646\u0642\u0630 \u0627\u0644\u0623\u0631\u0648\u0627\u062d" },
   "incoming.pleaseRespond": { en: "Please respond to this emergency alert", ar: "\u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0644\u0647\u0630\u0627 \u0627\u0644\u062a\u0646\u0628\u064a\u0647 \u0627\u0644\u0637\u0627\u0631\u0626" },
 
-  "login.welcome": { en: "Welcome Back", ar: "\u0645\u0631\u062d\u0628\u064b\u0627 \u0628\u0639\u0648\u062f\u062a\u0643" },
-  "login.signInSubtitle": { en: "Sign in to continue to your account", ar: "\u0633\u062c\u0651\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629 \u0625\u0644\u0649 \u062d\u0633\u0627\u0628\u0643" },
+  "login.welcome": { en: "Welcome back", ar: "\u0645\u0631\u062d\u0628\u064b\u0627 \u0628\u0639\u0648\u062f\u062a\u0643" },
+  "login.signInSubtitle": { en: "Sign in to your account to continue", ar: "\u0633\u062c\u0651\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0625\u0644\u0649 \u062d\u0633\u0627\u0628\u0643 \u0644\u0644\u0645\u062a\u0627\u0628\u0639\u0629" },
   "login.platformSubtitle": { en: "Emdad Arabia Healthcare Platform", ar: "\u0645\u0646\u0635\u0629 \u0625\u0645\u062f\u0627\u062f \u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u0644\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u0635\u062d\u064a\u0629" },
   "login.username": { en: "Username", ar: "\u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645" },
   "login.enterUsername": { en: "Enter your username", ar: "\u0623\u062f\u062e\u0644 \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645" },
@@ -134,7 +161,13 @@ const translations: Record<string, Record<Language, string>> = {
   "login.signingIn": { en: "Signing in...", ar: "\u062c\u0627\u0631\u064d \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644..." },
   "login.dontHaveAccount": { en: "Don't have an account?", ar: "\u0644\u064a\u0633 \u0644\u062f\u064a\u0643 \u062d\u0633\u0627\u0628\u061f" },
   "login.createAccount": { en: "Create Account", ar: "\u0625\u0646\u0634\u0627\u0621 \u062d\u0633\u0627\u0628" },
-  "login.secureData": { en: "Your data is secure & encrypted", ar: "\u0628\u064a\u0627\u0646\u0627\u062a\u0643 \u0622\u0645\u0646\u0629 \u0648\u0645\u0634\u0641\u0631\u0629" },
+  "login.secureData": { en: "Secure healthcare data management", ar: "\u0625\u062f\u0627\u0631\u0629 \u0628\u064a\u0627\u0646\u0627\u062a \u0635\u062d\u064a\u0629 \u0622\u0645\u0646\u0629" },
+  "login.continueAsGuest": { en: "Continue as Guest", ar: "\u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629 \u0643\u0636\u064a\u0641" },
+  "login.biometricUnavailableTitle": { en: "Biometrics unavailable", ar: "\u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u062d\u064a\u0648\u064a \u063a\u064a\u0631 \u0645\u062a\u0627\u062d" },
+  "login.biometricUnavailableMessage": {
+    en: "Add Face ID or fingerprint in your device settings, then try again.",
+    ar: "\u0623\u0636\u0641 Face ID \u0623\u0648 \u0628\u0635\u0645\u0629 \u0627\u0644\u0625\u0635\u0628\u0639 \u0641\u064a \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0627\u0644\u062c\u0647\u0627\u0632\u060c \u062b\u0645 \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
+  },
 
   "register.createAccount": { en: "Create Your Account", ar: "\u0623\u0646\u0634\u0626 \u062d\u0633\u0627\u0628\u0643" },
   "register.desc": { en: "Join the emergency response network", ar: "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0634\u0628\u0643\u0629 \u0627\u0644\u0627\u0633\u062a\u062c\u0627\u0628\u0629 \u0644\u0644\u0637\u0648\u0627\u0631\u0626" },
@@ -157,9 +190,9 @@ const translations: Record<string, Record<Language, string>> = {
   "forgot.backToLogin": { en: "Back to Sign In", ar: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644" },
 
   "otp.title": { en: "OTP Verification", ar: "\u0627\u0644\u062a\u062d\u0642\u0642 \u0628\u0631\u0645\u0632 OTP" },
-  "otp.enterSixDigit": { en: "Enter the 6-digit code", ar: "\u0623\u062f\u062e\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 6 \u0623\u0631\u0642\u0627\u0645" },
+  "otp.enterFourDigit": { en: "Enter the 4-digit code", ar: "\u0623\u062f\u062e\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 4 \u0623\u0631\u0642\u0627\u0645" },
   "otp.verifyCode": { en: "Verify Code", ar: "\u0627\u0644\u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u0631\u0645\u0632" },
-  "otp.verifyCodeDesc": { en: "We've sent a 6-digit verification code to your email. Please enter it below.", ar: "\u0644\u0642\u062f \u0623\u0631\u0633\u0644\u0646\u0627 \u0631\u0645\u0632 \u062a\u062d\u0642\u0642 \u0645\u0643\u0648\u0646\u064b\u0627 \u0645\u0646 6 \u0623\u0631\u0642\u0627\u0645 \u0625\u0644\u0649 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a. \u0623\u062f\u062e\u0644\u0647 \u0623\u062f\u0646\u0627\u0647." },
+  "otp.verifyCodeDesc": { en: "We've sent a 4-digit verification code to your email. Please enter it below.", ar: "\u0644\u0642\u062f \u0623\u0631\u0633\u0644\u0646\u0627 \u0631\u0645\u0632 \u062a\u062d\u0642\u0642 \u0645\u0643\u0648\u0646\u064b\u0627 \u0645\u0646 4 \u0623\u0631\u0642\u0627\u0645 \u0625\u0644\u0649 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a. \u0623\u062f\u062e\u0644\u0647 \u0623\u062f\u0646\u0627\u0647." },
   "otp.verifyAndContinue": { en: "Verify & Continue", ar: "\u0627\u0644\u062a\u062d\u0642\u0642 \u0648\u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629" },
   "otp.resendCode": { en: "Resend Code", ar: "\u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0645\u0632" },
   "otp.backToPrevious": { en: "Go Back", ar: "\u0627\u0644\u0639\u0648\u062f\u0629" },
@@ -167,7 +200,7 @@ const translations: Record<string, Record<Language, string>> = {
   "verifyOtp.title": { en: "Verify Identity", ar: "\u0627\u0644\u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u0647\u0648\u064a\u0629" },
   "verifyOtp.subtitle": { en: "One last step before you're in", ar: "\u062e\u0637\u0648\u0629 \u0623\u062e\u064a\u0631\u0629 \u0642\u0628\u0644 \u0627\u0644\u062f\u062e\u0648\u0644" },
   "verifyOtp.verifyIdentity": { en: "Verify your identity", ar: "\u062a\u062d\u0642\u0642 \u0645\u0646 \u0647\u0648\u064a\u062a\u0643" },
-  "verifyOtp.enterCode": { en: "Enter the 6-digit code sent to your registered email", ar: "\u0623\u062f\u062e\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 6 \u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" },
+  "verifyOtp.enterCode": { en: "Enter the 4-digit code sent to your registered email", ar: "\u0623\u062f\u062e\u0644 \u0627\u0644\u0631\u0645\u0632 \u0627\u0644\u0645\u0643\u0648\u0646 \u0645\u0646 4 \u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0645\u0631\u0633\u0644 \u0625\u0644\u0649 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" },
   "verifyOtp.verify": { en: "Verify", ar: "\u062a\u062d\u0642\u0642" },
   "verifyOtp.didntReceive": { en: "Didn't receive the code?", ar: "\u0644\u0645 \u062a\u0633\u062a\u0644\u0645 \u0627\u0644\u0631\u0645\u0632\u061f" },
   "verifyOtp.resendIn": { en: "Resend in", ar: "\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0628\u0639\u062f" },
@@ -193,6 +226,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
   const [theme, setThemeState] = useState<Theme>("light");
+  const [biometricLoginEnabled, setBiometricLoginState] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem("app_language").then((val) => {
@@ -200,6 +234,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
     AsyncStorage.getItem("app_theme").then((val) => {
       if (val === "dark" || val === "light") setThemeState(val);
+    });
+    AsyncStorage.getItem("app_biometric_login").then((val) => {
+      if (val === "1") setBiometricLoginState(true);
     });
   }, []);
 
@@ -222,6 +259,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
+  const setBiometricLoginEnabled = (enabled: boolean) => {
+    setBiometricLoginState(enabled);
+    AsyncStorage.setItem("app_biometric_login", enabled ? "1" : "0");
+  };
+
   const t = (key: string): string => {
     return translations[key]?.[language] || key;
   };
@@ -235,8 +277,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         theme,
         isDark: theme === "dark",
         colors,
+        biometricLoginEnabled,
         setLanguage,
         setTheme,
+        setBiometricLoginEnabled,
         toggleTheme,
         t,
       }}

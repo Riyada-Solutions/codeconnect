@@ -15,6 +15,7 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 
 export default function NewPasswordScreen() {
@@ -69,9 +70,14 @@ export default function NewPasswordScreen() {
         </RNAnimated.View>
         <Text style={[styles.successTitle, { color: colors.text }]}>{t("newPass.updated")}</Text>
         <Text style={[styles.successDesc, { color: colors.textSecondary }]}>{t("newPass.updatedDesc")}</Text>
-        <Pressable style={styles.successBtn} onPress={() => router.replace("/(auth)/login")}>
-          <Text style={styles.successBtnText}>{t("login.signIn")}</Text>
-        </Pressable>
+        <CustomButton
+          title={t("login.signIn")}
+          onPress={() => router.replace("/(auth)/login")}
+          widerPadding
+          height={52}
+          radius={16}
+          style={styles.successBtnShadow}
+        />
       </View>
     );
   }
@@ -156,11 +162,15 @@ export default function NewPasswordScreen() {
             </View>
           )}
 
-          <Pressable style={styles.saveBtn} onPress={handleSave} disabled={loading}>
-            <Text style={styles.saveBtnText}>
-              {loading ? t("register.loading") : t("newPass.updatePassword")}
-            </Text>
-          </Pressable>
+          <CustomButton
+            title={t("newPass.updatePassword")}
+            onPress={handleSave}
+            loading={loading}
+            widerPadding
+            height={52}
+            radius={16}
+            style={styles.saveBtnShadow}
+          />
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -255,16 +265,12 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     flex: 1,
   },
-  saveBtn: {
-    backgroundColor: "#2daaae",
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  saveBtnText: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 16,
-    color: "#fff",
+  saveBtnShadow: {
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
   },
   successCircle: {
     width: 80,
@@ -286,16 +292,14 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     marginBottom: 28,
   },
-  successBtn: {
-    backgroundColor: "#2daaae",
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    alignItems: "center",
-  },
-  successBtnText: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 16,
-    color: "#fff",
+  successBtnShadow: {
+    width: "100%",
+    maxWidth: 320,
+    alignSelf: "center",
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
   },
 });

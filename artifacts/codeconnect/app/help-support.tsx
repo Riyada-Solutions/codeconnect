@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 import type { ThemeColors } from "@/constants/theme";
 
@@ -171,10 +172,12 @@ export default function HelpSupportScreen() {
             </View>
           </View>
 
-          <Pressable style={styles.sendBtn} onPress={handleSend}>
-            <Feather name="send" size={16} color="#ffffff" />
-            <Text style={styles.sendBtnText}>{t("help.send")}</Text>
-          </Pressable>
+          <CustomButton onPress={handleSend} color={colors.primary} height={48} widerPadding style={{ marginTop: 4 }}>
+            <View style={styles.sendBtnInner}>
+              <Feather name="send" size={16} color="#ffffff" />
+              <Text style={styles.sendBtnText}>{t("help.send")}</Text>
+            </View>
+          </CustomButton>
         </View>
       </ScrollView>
     </View>
@@ -279,15 +282,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter_400Regular",
   },
-  sendBtn: {
+  sendBtnInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: 48,
-    backgroundColor: "#2daaae",
-    borderRadius: 12,
     gap: 8,
-    marginTop: 4,
   },
   sendBtnText: {
     fontSize: 15,

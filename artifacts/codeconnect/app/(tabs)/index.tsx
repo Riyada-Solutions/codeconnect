@@ -35,13 +35,13 @@ export default function HomeScreen() {
             <View>
               <Text style={styles.greeting}>{getGreeting()}</Text>
               <Text style={styles.userName}>{mockUser.name}</Text>
-              <Text style={styles.userRole}>{mockUser.role} - {mockUser.hospital}</Text>
+              {/* <Text style={styles.userRole}>{mockUser.role} - {mockUser.hospital}</Text> */}
             </View>
           </View>
           <View style={styles.heroRight}>
-            <Pressable style={styles.iconBtn}>
-              <Feather name="search" size={18} color="#ffffff" />
-            </Pressable>
+            {/* <Pressable style={styles.iconBtn}> */}
+              {/* <Feather name="search" size={18} color="#ffffff" /> */}
+            {/* </Pressable> */}
             <Pressable style={styles.iconBtn} onPress={() => router.push("/notifications")}>
               <Feather name="bell" size={18} color="#ffffff" />
               <View style={styles.notifDot} />
@@ -66,7 +66,7 @@ export default function HomeScreen() {
                 description={code.description}
                 color={code.color}
                 icon={code.icon}
-                onPress={() => router.push(`/emergency/new?code=${code.type}`)}
+                onPress={() => router.push(`/emergency/new?code=${encodeURIComponent(code.type)}`)}
               />
             ))}
           </View>

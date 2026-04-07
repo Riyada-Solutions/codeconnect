@@ -14,6 +14,7 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 
 const FIELDS = [
@@ -93,11 +94,15 @@ export default function RegisterScreen() {
             <Text style={[styles.branchText, { color: colors.text }]}>{t("register.mainBranch")}</Text>
           </View>
 
-          <Pressable style={styles.registerBtn} onPress={handleRegister} disabled={loading}>
-            <Text style={styles.registerBtnText}>
-              {loading ? t("register.loading") : t("register.register")}
-            </Text>
-          </Pressable>
+          <CustomButton
+            title={t("register.register")}
+            onPress={handleRegister}
+            loading={loading}
+            widerPadding
+            height={52}
+            radius={16}
+            style={styles.registerBtnShadow}
+          />
         </Animated.View>
 
         <Pressable onPress={() => router.push("/(auth)/login")} style={styles.loginLink}>
@@ -187,17 +192,13 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: 15,
   },
-  registerBtn: {
-    backgroundColor: "#2daaae",
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: "center",
+  registerBtnShadow: {
     marginTop: 4,
-  },
-  registerBtnText: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 16,
-    color: "#fff",
+    shadowColor: "#2daaae",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
   },
   loginLink: { marginTop: 16, alignItems: "center" },
   loginLinkText: {

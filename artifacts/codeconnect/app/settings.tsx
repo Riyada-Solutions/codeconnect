@@ -16,7 +16,16 @@ import { useApp } from "@/contexts/AppContext";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { t, isDark, colors, toggleTheme, language, setLanguage } = useApp();
+  const {
+    t,
+    isDark,
+    colors,
+    toggleTheme,
+    language,
+    setLanguage,
+    biometricLoginEnabled,
+    setBiometricLoginEnabled,
+  } = useApp();
   const [pushNotif, setPushNotif] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibration, setVibration] = useState(true);
@@ -82,6 +91,29 @@ export default function SettingsScreen() {
               {language === "ar" && <View style={styles.radioInner} />}
             </View>
           </Pressable>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View style={[styles.sectionHeader, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.sectionLabel}>{t("settings.security").toUpperCase()}</Text>
+          </View>
+          <View style={[styles.settingRow, styles.settingRowMultiline, { borderBottomColor: colors.border }]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primaryLight }]}>
+              <Feather name="shield" size={16} color={colors.primary} />
+            </View>
+            <View style={styles.settingTextCol}>
+              <Text style={[styles.settingText, styles.settingTextNoFlex, { color: colors.text }]}>
+                {t("settings.biometricLogin")}
+              </Text>
+              <Text style={[styles.settingHint, { color: colors.textMuted }]}>{t("settings.biometricLoginHint")}</Text>
+            </View>
+            <Switch
+              value={biometricLoginEnabled}
+              onValueChange={setBiometricLoginEnabled}
+              trackColor={{ false: "#e0e0e0", true: "#2daaae" }}
+              thumbColor="#ffffff"
+            />
+          </View>
         </View>
 
         <View style={[styles.card, { backgroundColor: colors.card }]}>
@@ -199,6 +231,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     gap: 12,
   },
+  settingRowMultiline: {
+    height: undefined,
+    minHeight: 62,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
   settingIcon: {
     width: 34,
     height: 34,
@@ -210,6 +248,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontFamily: "Inter_500Medium",
+  },
+  settingTextNoFlex: {
+    flex: 0,
+  },
+  settingTextCol: {
+    flex: 1,
+    marginRight: 8,
+    gap: 2,
+  },
+  settingHint: {
+    fontSize: 11,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 14,
   },
   langRow: {
     flexDirection: "row",

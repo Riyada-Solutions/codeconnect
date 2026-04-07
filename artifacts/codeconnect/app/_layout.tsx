@@ -26,7 +26,14 @@ function RootLayoutNav() {
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="alert/[id]" />
-      <Stack.Screen name="emergency/new" options={{ presentation: "modal" }} />
+      <Stack.Screen
+        name="emergency/new"
+        options={{
+          presentation: "transparentModal",
+          animation: "slide_from_bottom",
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="settings" />

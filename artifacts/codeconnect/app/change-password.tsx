@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/ui/CustomButton";
 import { useApp } from "@/contexts/AppContext";
 
 export default function ChangePasswordScreen() {
@@ -108,9 +109,7 @@ export default function ChangePasswordScreen() {
             </View>
           </View>
 
-          <Pressable style={styles.saveBtn} onPress={handleSave}>
-            <Text style={styles.saveBtnText}>{t("changePassword.update")}</Text>
-          </Pressable>
+          <CustomButton title={t("changePassword.update")} onPress={handleSave} color={colors.primary} height={48} style={{ marginTop: 4 }} />
         </View>
       </ScrollView>
     </View>
@@ -170,18 +169,5 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontFamily: "Inter_400Regular",
-  },
-  saveBtn: {
-    height: 48,
-    backgroundColor: "#2daaae",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 4,
-  },
-  saveBtnText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
   },
 });

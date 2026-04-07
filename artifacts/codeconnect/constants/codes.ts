@@ -4,11 +4,20 @@ export interface CodeType {
   color: string;
   icon: string;
   description: string;
+  /** Shown under the code title on the alert form (e.g. severity line). */
+  tagline?: string;
 }
 
 export const CODES: CodeType[] = [
   { id: "blue", type: "Code Blue", color: "#3b82f6", icon: "heart", description: "Cardiac arrest / Medical emergency" },
-  { id: "red", type: "Code Red", color: "#ef4444", icon: "alert-triangle", description: "Fire / Smoke" },
+  {
+    id: "red",
+    type: "Code Red",
+    color: "#ef4444",
+    icon: "alert-triangle",
+    description: "Fire / Smoke",
+    tagline: "Critical Emergency",
+  },
   { id: "pink", type: "Code Pink", color: "#ec4899", icon: "user", description: "Infant / Child abduction" },
   { id: "yellow", type: "Code Yellow", color: "#f59e0b", icon: "alert-circle", description: "Bomb threat" },
   { id: "orange", type: "Code Orange", color: "#f97316", icon: "zap", description: "Hazardous material spill" },

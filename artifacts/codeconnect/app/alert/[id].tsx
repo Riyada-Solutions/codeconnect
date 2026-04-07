@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
+import CustomButton from "@/components/ui/CustomButton";
 import { alertsList } from "@/constants/mockData";
 import { useApp } from "@/contexts/AppContext";
 import { formatTime } from "@/utils/formatTime";
@@ -105,12 +106,21 @@ export default function AlertDetailScreen() {
         </View>
 
         <View style={styles.actions}>
-          <Pressable style={styles.respondBtn}>
-            <Text style={styles.respondText}>{t("alertDetail.respond")}</Text>
-          </Pressable>
-          <Pressable style={[styles.escalateBtn, { borderColor: colors.primary }]}>
-            <Text style={[styles.escalateText, { color: colors.primary }]}>{t("alertDetail.escalate")}</Text>
-          </Pressable>
+          <View style={styles.actionFlex}>
+            <CustomButton title={t("alertDetail.respond")} onPress={() => {}} color={colors.primary} height={48} style={styles.actionGrow} />
+          </View>
+          <View style={styles.actionFlex}>
+            <CustomButton
+              title={t("alertDetail.escalate")}
+              onPress={() => {}}
+              isOutlined
+              borderColor={colors.primary}
+              textColor={colors.primary}
+              height={48}
+              fontSize={15}
+              style={styles.actionGrow}
+            />
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -242,29 +252,11 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 4,
   },
-  respondBtn: {
+  actionFlex: {
     flex: 1,
-    height: 48,
-    backgroundColor: "#2daaae",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  respondText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
-  },
-  escalateBtn: {
+  actionGrow: {
     flex: 1,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  escalateText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+    alignSelf: "stretch",
   },
 });

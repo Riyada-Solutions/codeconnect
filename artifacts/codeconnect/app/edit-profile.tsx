@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
+import CustomButton from "@/components/ui/CustomButton";
 import { mockUser } from "@/constants/mockData";
 import { useApp } from "@/contexts/AppContext";
 
@@ -31,9 +32,16 @@ export default function EditProfileScreen() {
           <Feather name="arrow-left" size={20} color={colors.heroText} />
         </Pressable>
         <Text style={[styles.headerTitle, { color: colors.heroText }]}>{t("editProfile.title")}</Text>
-        <Pressable style={styles.saveBtn} onPress={() => router.back()}>
+        <CustomButton
+          onPress={() => router.back()}
+          width={32}
+          height={32}
+          radius={8}
+          color="rgba(255,255,255,0.15)"
+          borderColor="rgba(255,255,255,0.2)"
+        >
           <Feather name="check" size={20} color={colors.heroText} />
-        </Pressable>
+        </CustomButton>
       </View>
 
       <ScrollView
@@ -49,10 +57,20 @@ export default function EditProfileScreen() {
             borderColor={colors.primary}
             borderWidth={2}
           />
-          <Pressable style={styles.changePhotoBtn}>
-            <Feather name="camera" size={14} color={colors.primary} />
-            <Text style={[styles.changePhotoText, { color: colors.primary }]}>{t("editProfile.changePhoto")}</Text>
-          </Pressable>
+          <CustomButton
+            onPress={() => {}}
+            width={0}
+            height={40}
+            radius={12}
+            isOutlined
+            borderColor={colors.primary}
+            widerPadding
+          >
+            <View style={[styles.changePhotoInner, { paddingHorizontal: 14 }]}>
+              <Feather name="camera" size={14} color={colors.primary} />
+              <Text style={[styles.changePhotoText, { color: colors.primary }]}>{t("editProfile.changePhoto")}</Text>
+            </View>
+          </CustomButton>
         </View>
 
         <View style={[styles.form, { backgroundColor: colors.card }]}>
@@ -136,14 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: "Inter_500Medium",
   },
-  saveBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   scrollContent: {
     padding: 14,
   },
@@ -152,7 +162,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12,
   },
-  changePhotoBtn: {
+  changePhotoInner: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
