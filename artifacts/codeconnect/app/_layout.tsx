@@ -42,6 +42,8 @@ function RootLayoutNav() {
       <Stack.Screen name="about" />
       <Stack.Screen name="help-support" />
       <Stack.Screen name="change-password" />
+      <Stack.Screen name="delete-account" />
+      <Stack.Screen name="delete-account-verify" />
       <Stack.Screen name="incoming-alert" options={{ presentation: "fullScreenModal", animation: "fade" }} />
     </Stack>
   );

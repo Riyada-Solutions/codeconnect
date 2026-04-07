@@ -206,7 +206,8 @@ export default function LoginScreen() {
                 >
                   <View style={styles.biometricIconRow}>
                     {/* <MaterialCommunityIcons name="face-man-profile" size={18} color={colors.primary} /> */}
-                    <MaterialCommunityIcons name="fingerprint" size={28} color={colors.primary} />                              </View>
+                    <MaterialCommunityIcons name="fingerprint" size={28} color={colors.primary} />
+                                                  </View>
                 </CustomButton>
               ) : null}
             </View>

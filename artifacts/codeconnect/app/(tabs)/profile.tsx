@@ -146,6 +146,17 @@ export default function ProfileScreen() {
           />
         </View>
 
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <MenuRow
+            icon="trash-2"
+            iconColor="#dc2626"
+            iconBg="#fef2f2"
+            label={t("profile.deleteAccount")}
+            onPress={() => router.push("/delete-account")}
+            colors={colors}
+          />
+        </View>
+
         <CustomButton onPress={handleLogout} color={colors.card} borderColor="#fecaca" height={50} radius={14}>
           <View style={styles.logoutInner}>
             <Feather name="log-out" size={18} color="#ef4444" />
