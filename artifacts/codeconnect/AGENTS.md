@@ -1,10 +1,10 @@
 # AGENTS.md — CodeConnect Project Coding Rules
 
 ## Architecture
-- Always use a **service layer** for all data access and API calls
+- Always use a **data layer** for all data access, API calls, and Firebase operations
 - Components must NEVER call REST APIs or Firebase directly
-- Place all API logic in `services/` files
-- Services should be named by domain using **snake_case** (e.g. `auth_service.ts`, `alert_service.ts`, `emergency_service.ts`, `notification_service.ts`)
+- Place all data access logic in `data/` repository files
+- Repositories should be named by domain using **snake_case** (e.g. `auth_repository.ts`, `alert_repository.ts`, `emergency_repository.ts`)
 - Use **TanStack React Query** (`@tanstack/react-query`) for all server state management
 - Use the generated API client from `@workspace/api-client-react` as the HTTP layer
 
@@ -17,22 +17,22 @@ artifacts/codeconnect/
 │   ├── alert/            # Alert detail routes
 │   └── emergency/        # Emergency request routes
 ├── components/           # Reusable UI components
-│   └── ui/               # Primitive UI components (Card, Badge, Avatar)
+│   └── ui/               # Primitive UI components (Card, Badge, Avatar, FeedbackDialog)
 ├── constants/            # Static values, theme, emergency codes, enums
 ├── contexts/             # React Context providers (AppContext for theme/i18n)
 ├── hooks/                # Custom React hooks
-├── services/             # All API/data access logic
-│   ├── api.ts            # Base API client configuration (Axios instance)
-│   ├── auth_service.ts   # Authentication API calls
-│   ├── alert_service.ts  # Alert/emergency API calls
-│   ├── fcm_service.ts    # Firebase Cloud Messaging setup & token management
-│   └── notification_service.ts  # Local notification display & handling
+├── data/                 # Data layer — all API/Firebase/data access logic
+│   ├── api_client.ts     # Base API client configuration (Axios instance)
+│   ├── auth_repository.ts       # Authentication API calls
+│   ├── alert_repository.ts      # Alert/emergency API calls
+│   ├── fcm_repository.ts        # Firebase Cloud Messaging setup & token management
+│   └── notification_repository.ts  # Local notification display & handling
 ├── utils/                # Utility/helper functions
 └── assets/               # Images, fonts, icons
 ```
 
 ## Naming Conventions
-- Use **snake_case** for all files and folders (e.g. `alert_card.tsx`, `auth_service.ts`, `format_time.ts`)
+- Use **snake_case** for all files and folders (e.g. `alert_card.tsx`, `auth_repository.ts`, `format_time.ts`)
 - Exception: route files follow Expo Router conventions using **kebab-case** (e.g. `forgot-password.tsx`, `verify-otp.tsx`)
 - Use **PascalCase** for React component names inside files (e.g. `export default function AlertCard()`)
 - Use **camelCase** for variables and function names
@@ -56,11 +56,11 @@ artifacts/codeconnect/
 - Use `router.push()`, `router.replace()`, and `router.back()` from `expo-router`
 
 ## HTTP & API
-- Create a single base API client in `services/api.ts` with base URL from environment variables
-- Wrap all API calls in service files under `services/`
+- Create a single base API client in `data/api_client.ts` with base URL from environment variables
+- Wrap all API calls in repository files under `data/`
 - Use **TanStack React Query** hooks in components for caching and server state
-- Always handle API errors in the service layer and throw meaningful error messages
-- During development, mock data lives in `constants/mock_data.ts` — replace with real service calls when backend is ready
+- Always handle API errors in the data layer and throw meaningful error messages
+- During development, mock data lives in `constants/mock_data.ts` — replace with real repository calls when backend is ready
 
 ## Firebase Integration
 
@@ -77,14 +77,14 @@ artifacts/codeconnect/
 - Firebase config goes in `google-services.json` (Android) and `GoogleService-Info.plist` (iOS)
 - Never commit Firebase config files with production credentials — use `.env` for API keys
 
-### FCM Service (`services/fcm_service.ts`)
+### FCM Repository (`data/fcm_repository.ts`)
 Handles all Firebase Cloud Messaging logic:
 1. **Permission requests** — request notification permission on both iOS and Android
-2. **Token management** — get FCM device token, cache it, send to backend via `auth_service.ts`
+2. **Token management** — get FCM device token, cache it, send to backend via `auth_repository.ts`
 3. **Token refresh** — listen for token changes and update backend
 4. **Background handler** — register background message handler (must be top-level function)
 
-### Notification Service (`services/notification_service.ts`)
+### Notification Repository (`data/notification_repository.ts`)
 Handles local notification display and tap actions:
 1. **Channel setup** — create Android notification channel (`high_importance_channel`)
 2. **Foreground display** — show local notification when FCM message arrives while app is open
@@ -117,7 +117,7 @@ enum NotificationType {
 - Pass navigation ref so notification taps can trigger screen navigation
 
 ### Sending Token to Backend
-- After successful login, call `fcm_service.updateDeviceToken(userId, token)`
+- After successful login, call `fcm_repository.updateDeviceToken(userId, token)`
 - On token refresh, automatically re-send to backend
 - Cache token locally to avoid redundant API calls
 
@@ -132,7 +132,7 @@ enum NotificationType {
 ## Environment Variables & Secrets
 - Store API URLs, Firebase keys, and all secrets in `.env` files or Replit Secrets
 - Never hardcode secrets, tokens, or API keys in the codebase
-- Reference the base API URL from `VITE_API_BASE_URL` or equivalent env variable
+- Reference the base API URL from environment variable (e.g. `API_BASE_URL`)
 - Firebase config values must come from environment or platform-specific config files
 
 ## Components
