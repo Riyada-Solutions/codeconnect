@@ -6,7 +6,14 @@
 - Place all data access logic in `data/` repository files
 - Repositories should be named by domain using **snake_case** (e.g. `auth_repository.ts`, `alert_repository.ts`, `emergency_repository.ts`)
 - Use **TanStack React Query** (`@tanstack/react-query`) for all server state management
-- Use the generated API client from `@workspace/api-client-react` as the HTTP layer
+- Each repository checks the `USE_MOCK_DATA` env variable — if `true`, return mock JSON data from `constants/mock_data/`; if `false`, call the real API
+
+## Data Source Strategy
+- The env variable `USE_MOCK_DATA` (in `.env`) controls data source switching
+- When `USE_MOCK_DATA=true`: repositories return static mock data from JSON files in `constants/mock_data/`
+- When `USE_MOCK_DATA=false`: repositories call the real backend API via `data/api_client.ts`
+- Every repository function must support both paths — mock and real
+- Mock JSON files should mirror the exact API response shape so switching is seamless
 
 ## Folder Structure
 ```
@@ -19,12 +26,13 @@ artifacts/codeconnect/
 ├── components/           # Reusable UI components
 │   └── ui/               # Primitive UI components (Card, Badge, Avatar, FeedbackDialog)
 ├── constants/            # Static values, theme, emergency codes, enums
+│   └── mock_data/        # Mock JSON files (used when USE_MOCK_DATA=true)
 ├── contexts/             # React Context providers (AppContext for theme/i18n)
 ├── hooks/                # Custom React hooks
 ├── data/                 # Data layer — all API/Firebase/data access logic
 │   ├── api_client.ts     # Base API client configuration (Axios instance)
-│   ├── auth_repository.ts       # Authentication API calls
-│   ├── alert_repository.ts      # Alert/emergency API calls
+│   ├── auth_repository.ts       # Authentication API calls (or mock)
+│   ├── alert_repository.ts      # Alert/emergency API calls (or mock)
 │   ├── fcm_repository.ts        # Firebase Cloud Messaging setup & token management
 │   └── notification_repository.ts  # Local notification display & handling
 ├── utils/                # Utility/helper functions
@@ -56,11 +64,10 @@ artifacts/codeconnect/
 - Use `router.push()`, `router.replace()`, and `router.back()` from `expo-router`
 
 ## HTTP & API
-- Create a single base API client in `data/api_client.ts` with base URL from environment variables
+- Create a single base API client in `data/api_client.ts` with base URL from `API_BASE_URL` env variable
 - Wrap all API calls in repository files under `data/`
 - Use **TanStack React Query** hooks in components for caching and server state
 - Always handle API errors in the data layer and throw meaningful error messages
-- During development, mock data lives in `constants/mock_data.ts` — replace with real repository calls when backend is ready
 
 ## Firebase Integration
 
@@ -132,7 +139,8 @@ enum NotificationType {
 ## Environment Variables & Secrets
 - Store API URLs, Firebase keys, and all secrets in `.env` files or Replit Secrets
 - Never hardcode secrets, tokens, or API keys in the codebase
-- Reference the base API URL from environment variable (e.g. `API_BASE_URL`)
+- `API_BASE_URL` — the backend API base URL
+- `USE_MOCK_DATA` — set to `true` for mock data, `false` for real API calls
 - Firebase config values must come from environment or platform-specific config files
 
 ## Components
