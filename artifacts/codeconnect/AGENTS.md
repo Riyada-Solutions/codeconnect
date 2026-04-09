@@ -6,14 +6,15 @@
 - Place all data access logic in `data/` repository files
 - Repositories should be named by domain using **snake_case** (e.g. `auth_repository.ts`, `alert_repository.ts`, `emergency_repository.ts`)
 - Use **TanStack React Query** (`@tanstack/react-query`) for all server state management
-- Each repository checks the `USE_MOCK_DATA` env variable — if `true`, return mock JSON data from `constants/mock_data/`; if `false`, call the real API
+- Each repository checks the `USE_MOCK_DATA` env variable — if `true`, return mock data from `data/mock/`; if `false`, call the real API
 
 ## Data Source Strategy
 - The env variable `USE_MOCK_DATA` (in `.env`) controls data source switching
-- When `USE_MOCK_DATA=true`: repositories return static mock data from JSON files in `constants/mock_data/`
+- When `USE_MOCK_DATA=true`: repositories return static mock data from `data/mock/` files
 - When `USE_MOCK_DATA=false`: repositories call the real backend API via `data/api_client.ts`
 - Every repository function must support both paths — mock and real
-- Mock JSON files should mirror the exact API response shape so switching is seamless
+- Mock data files live inside the data layer at `data/mock/` (e.g. `data/mock/auth_mock.ts`, `data/mock/alerts_mock.ts`)
+- Mock data should mirror the exact API response shape so switching is seamless
 
 ## Folder Structure
 ```
@@ -26,10 +27,12 @@ artifacts/codeconnect/
 ├── components/           # Reusable UI components
 │   └── ui/               # Primitive UI components (Card, Badge, Avatar, FeedbackDialog)
 ├── constants/            # Static values, theme, emergency codes, enums
-│   └── mock_data/        # Mock JSON files (used when USE_MOCK_DATA=true)
 ├── contexts/             # React Context providers (AppContext for theme/i18n)
 ├── hooks/                # Custom React hooks
 ├── data/                 # Data layer — all API/Firebase/data access logic
+│   ├── mock/             # Mock data files (used when USE_MOCK_DATA=true)
+│   │   ├── auth_mock.ts          # Mock auth responses
+│   │   └── alerts_mock.ts        # Mock alert/emergency responses
 │   ├── api_client.ts     # Base API client configuration (Axios instance)
 │   ├── auth_repository.ts       # Authentication API calls (or mock)
 │   ├── alert_repository.ts      # Alert/emergency API calls (or mock)
