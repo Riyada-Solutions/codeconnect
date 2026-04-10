@@ -36,8 +36,6 @@ minimumReleaseAgeExclude:
 
 packages:
   - "."
-  - "artifacts/*"
-  - "lib/*"
 
 catalog:
   '@replit/vite-plugin-cartographer': ^0.5.1

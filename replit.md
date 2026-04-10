@@ -2,11 +2,11 @@
 
 ## Overview
 
-CodeConnect — hospital emergency response mobile app for Emdad Arabia. Built with Expo / React Native as a Replit artifact.
+CodeConnect — hospital emergency response mobile app for Emdad Arabia. Built with Expo / React Native at the project root.
 
 ## Stack
 
-- **Package manager**: pnpm (monorepo workspace)
+- **Package manager**: pnpm
 - **Node.js version**: 24
 - **TypeScript version**: 5.9
 - **Framework**: Expo SDK 54 + React Native
@@ -18,35 +18,29 @@ CodeConnect — hospital emergency response mobile app for Emdad Arabia. Built w
 
 ## Project Structure
 
-The Expo app lives in `artifacts/codeconnect/` as a proper Replit artifact (supports Publish button).
+The Expo app lives at the **project root** (not in `artifacts/`).
 
 ```
 /
-├── artifacts/
-│   └── codeconnect/          # Main Expo mobile app
-│       ├── app/              # Expo Router screens
-│       │   ├── (auth)/       # Login, Register, OTP, Reset Password
-│       │   ├── (tabs)/       # Home, Alerts, Profile
-│       │   ├── alert/        # Alert detail [id]
-│       │   └── emergency/    # Activate emergency flow
-│       ├── components/ui/    # Reusable UI components
-│       ├── constants/        # Theme, enums, emergency codes
-│       ├── contexts/         # AppContext (theme + i18n)
-│       ├── data/             # Data layer (repositories + mock)
-│       │   └── mock/         # Mock data (USE_MOCK_DATA=true)
-│       ├── hooks/            # Custom React hooks
-│       ├── types/            # Shared TypeScript interfaces
-│       ├── utils/            # Helper functions
-│       ├── assets/           # Images, fonts, icons
-│       ├── scripts/          # Build scripts (build.cjs)
-│       ├── server/           # Production serve script
-│       ├── shims/            # Module shims (expo-local-authentication)
-│       ├── app.json          # Expo config
-│       ├── eas.json          # EAS build config
-│       └── package.json      # @workspace/codeconnect
-├── AGENTS.md                 # Coding rules & architecture guide
-├── API_SPEC.md               # Backend API contract
-└── pnpm-workspace.yaml       # Workspace config
+├── app/                  # Expo Router screens
+│   ├── (auth)/           # Login, Register, OTP, Reset Password
+│   ├── (tabs)/           # Home, Alerts, Profile
+│   ├── alert/            # Alert detail [id]
+│   └── emergency/        # Activate emergency flow
+├── components/ui/        # Reusable UI components
+├── constants/            # Theme, enums, emergency codes
+├── contexts/             # AppContext (theme + i18n)
+├── data/                 # Data layer (repositories + mock)
+│   └── mock/             # Mock data (USE_MOCK_DATA=true)
+├── hooks/                # Custom React hooks
+├── types/                # Shared TypeScript interfaces
+├── utils/                # Helper functions
+├── assets/               # Images, fonts, icons
+├── shims/                # Module shims (expo-local-authentication)
+├── scripts/              # Dev/build scripts
+├── server/               # Production serve script
+├── AGENTS.md             # Coding rules & architecture guide
+└── API_SPEC.md           # Backend API contract
 ```
 
 ## Architecture
@@ -67,13 +61,10 @@ The Expo app lives in `artifacts/codeconnect/` as a proper Replit artifact (supp
 
 ## Key Commands
 
-- `pnpm --filter @workspace/codeconnect run dev` — start Expo dev server
-- `pnpm --filter @workspace/codeconnect run build` — build for production
-- `pnpm --filter @workspace/codeconnect run serve` — serve production build
-
-## Workflow
-
-- **artifacts/codeconnect: expo** — main dev workflow (auto-configured by artifact system)
+- `pnpm run dev` — start Expo dev server
+- `pnpm run build` — build for production
+- `pnpm run serve` — serve production build
+- `pnpm run typecheck` — TypeScript check
 
 ## iOS Publishing
 
@@ -83,7 +74,7 @@ The Expo app lives in `artifacts/codeconnect/` as a proper Replit artifact (supp
 - EAS Project ID: `1ae5d4fe-2950-4061-aeab-a3e2f1920daf`
 - Distribution Certificate serial: `1D5D4DDA1155041ADBA77983EF5FFAB8` (expires Apr 2027)
 - Provisioning Profile: `9Y7QLN52B7` (expires Apr 2027)
-- Publish via Replit's built-in Expo Launch (Publish button)
+- Publishing: Run `eas build` and `eas submit` from a local machine (Replit blocks git operations EAS needs)
 
 ## Key Documentation
 
