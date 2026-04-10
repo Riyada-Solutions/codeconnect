@@ -5,8 +5,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
-    "dev": "node scripts/dev.js",
-    "build": "node scripts/build.js",
+    "dev": "node scripts/dev.cjs",
+    "build": "node scripts/build.cjs",
     "serve": "node server/serve.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
