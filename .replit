@@ -41,3 +41,9 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+EXPO_APPLE_ID = "Ahmedsayed.cs2019@gmail.com"
+EXPO_APPLE_TEAM_ID = "N3R8MF955Y"
