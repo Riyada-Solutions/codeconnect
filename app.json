@@ -46,10 +46,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "emdadarabia",
+    "owner": "ahmed_asia",
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "1ae5d4fe-2950-4061-aeab-a3e2f1920daf"
       }
     }
   }
