@@ -15,6 +15,8 @@
     },
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "com.riyada.codeconnect",
+      "buildNumber": "1",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID."
       }
