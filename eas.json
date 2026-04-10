@@ -1,7 +1,7 @@
 {
   "cli": {
-    "version": ">= 14.0.0",
-    "appVersionSource": "remote"
+    "version": ">= 12.0.0",
+    "promptToConfigurePushNotifications": false
   },
   "build": {
     "development": {
@@ -17,17 +17,32 @@
         "simulator": false
       }
     },
+    "testflight": {
+      "distribution": "store",
+      "ios": {
+        "autoIncrement": true
+      },
+      "env": {
+        "EXPO_PUBLIC_USE_MOCK_DATA": "false"
+      }
+    },
     "production": {
-      "autoIncrement": true
+      "distribution": "store",
+      "ios": {
+        "autoIncrement": true
+      },
+      "env": {
+        "EXPO_PUBLIC_USE_MOCK_DATA": "false"
+      }
     }
   },
   "submit": {
-    "production": {
+    "testflight": {
       "ios": {
-        "appleId": "Ahmedsayed.cs2019@gmail.com",
+        "appleId": "ahmedsayed.cs2019@gmail.com",
         "ascAppId": "6762006158",
         "appleTeamId": "N3R8MF955Y"
-      } 
+      }
     }
   }
 }
