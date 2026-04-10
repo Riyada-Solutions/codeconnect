@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 16.0.0",
+    "version": ">= 14.0.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -18,26 +18,15 @@
       }
     },
     "production": {
-      "autoIncrement": true,
-      "ios": {
-        "image": "latest"
-      },
-      "android": {
-        "image": "latest",
-        "buildType": "app-bundle"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "ahmedsayed.cs2019@gmail.com",
-        "ascAppId": "",
-        "appleTeamId": ""
-      },
-      "android": {
-        "serviceAccountKeyPath": "",
-        "track": "internal"
+        "appleId": "Ahmedsayed.cs2019@gmail.com",
+        "ascAppId": "6762006158",
+        "appleTeamId": "N3R8MF955Y"
       }
     }
   }
