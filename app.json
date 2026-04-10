@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.emdadarabia.codeconnect",
       "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID."
+        "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

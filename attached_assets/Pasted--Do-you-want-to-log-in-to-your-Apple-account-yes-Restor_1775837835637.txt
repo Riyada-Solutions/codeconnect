@@ -1,0 +1,136 @@
+✔ Do you want to log in to your Apple account? … yes
+
+› Restoring session /home/runner/.app-store/auth/Ahmedsayed.cs2019@gmail.com/cookie
+› Provider Epal solutions, inc (120610640)
+✔ Logged in Local session
+iOS Credentials    
+Project            @ahmed_asia/codeconnect
+Bundle Identifier  com.emdadarabia.codeconnect
+                   
+                   No credentials set up yet!
+                   
+✔ What do you want to do? › Build Credentials: Manage everything needed to build your project
+iOS Credentials    
+Project            @ahmed_asia/codeconnect
+Bundle Identifier  com.emdadarabia.codeconnect
+                   
+                   No credentials set up yet!
+                   
+✔ What do you want to do? › All: Set up all the required credentials to build your project
+
+✔ Bundle identifier registered com.emdadarabia.codeconnect
+✔ Synced capabilities: No updates
+✔ Synced capability identifiers: No updates
+✔ Fetched Apple distribution certificates
+✔ Generate a new Apple Distribution Certificate? … yes
+✔ Created Apple distribution certificate
+✔ Created distribution certificate
+✔ Generate a new Apple Provisioning Profile? … yes
+✔ Created Apple provisioning profile
+✔ Created provisioning profile
+
+Project Credentials Configuration
+
+Project                   @ahmed_asia/codeconnect
+Bundle Identifier         com.emdadarabia.codeconnect
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             1D5D4DDA1155041ADBA77983EF5FFAB8
+Expiration Date           Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   6 seconds ago
+                          
+Provisioning Profile      
+Developer Portal ID       9Y7QLN52B7
+Status                    active
+Expiration                Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   0 second ago
+                          
+All credentials are ready to build @ahmed_asia/codeconnect (com.emdadarabia.codeconnect)
+
+Press any key to continue...
+
+
+iOS Credentials           
+Project                   @ahmed_asia/codeconnect
+Bundle Identifier         com.emdadarabia.codeconnect
+                          
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             1D5D4DDA1155041ADBA77983EF5FFAB8
+Expiration Date           Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   8 seconds ago
+                          
+Provisioning Profile      
+Developer Portal ID       9Y7QLN52B7
+Status                    active
+Expiration                Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   3 seconds ago
+                          
+✔ What do you want to do? › All: Set up all the required credentials to build your project
+
+✔ Bundle identifier registered com.emdadarabia.codeconnect
+✔ Synced capabilities: No updates
+✔ Synced capability identifiers: No updates
+✔ Fetched Apple distribution certificates
+✔ Fetched Apple provisioning profiles
+
+Project Credentials Configuration
+
+Project                   @ahmed_asia/codeconnect
+Bundle Identifier         com.emdadarabia.codeconnect
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             1D5D4DDA1155041ADBA77983EF5FFAB8
+Expiration Date           Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   14 seconds ago
+                          
+Provisioning Profile      
+Developer Portal ID       9Y7QLN52B7
+Status                    active
+Expiration                Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   9 seconds ago
+                          
+All credentials are ready to build @ahmed_asia/codeconnect (com.emdadarabia.codeconnect)
+
+Press any key to continue...
+
+
+iOS Credentials           
+Project                   @ahmed_asia/codeconnect
+Bundle Identifier         com.emdadarabia.codeconnect
+                          
+                          
+App Store Configuration   
+                          
+Distribution Certificate  
+Serial Number             1D5D4DDA1155041ADBA77983EF5FFAB8
+Expiration Date           Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   16 seconds ago
+                          
+Provisioning Profile      
+Developer Portal ID       9Y7QLN52B7
+Status                    active
+Expiration                Sat, 10 Apr 2027 16:06:41 UTC
+Apple Team                N3R8MF955Y (Epal solutions, inc (Company/Organization))
+Updated                   10 seconds ago
+                          
+? What do you want to do? › - Use arrow-keys. Return to submit.
+❯   All: Set up all the required credentials to build your project
+    Distribution Certificate: Use an existing one for your project
+    Distribution Certificate: Add a new one to your account
+    Distribution Certificate: Delete one from your account
+    Provisioning Profile: Delete one from your project
+    Go back
