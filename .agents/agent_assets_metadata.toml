@@ -1,8 +1,13 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "7qcctmrRyaTXmSnxExjQ2"
 uri = "file://artifacts/codeconnect/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "VuxmJKrxmU9qEgzJTOO3A"
+uri = "file://LOCAL_PUBLISHING_GUIDE.md"
+type = "text"
+title = "Local Publishing Guide — iOS App Store"
