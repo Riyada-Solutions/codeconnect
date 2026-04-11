@@ -19,6 +19,7 @@
     },
     "testflight": {
       "distribution": "store",
+      "credentialsSource": "remote",
       "ios": {
         "autoIncrement": true
       },
