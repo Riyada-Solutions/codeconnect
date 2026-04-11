@@ -627,7 +627,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 | `USE_MOCK_DATA` | Yes | `true` = mock data, `false` = real API |
 | `API_BASE_URL` | When `USE_MOCK_DATA=false` | Backend origin, e.g. `https://api.codeconnect.app` |
 | `EXPO_PUBLIC_*` prefix | — | Required by Expo for client-accessible env vars |
-
+ 
 ```typescript
 // constants/env.ts — single place to read env vars
 export const ENV = {
