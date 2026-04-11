@@ -46,12 +46,11 @@ export const MOCK_ALERTS: AlertDetail[] = [
 ]
 
 export const MOCK_ACTIVE_REQUESTS: ActiveRequest[] = [
-  { id: 'r1', title: 'Code Red: ICU-402', type: 'urgent', location: 'South Wing - Floor 4', updatedAt: '2m ago', code: 'Code Red', color: '#ef4444' },
-  { id: 'r2', title: 'Lab: STAT-Panel', type: 'pending', location: 'Main Lab - Central Hub', updatedAt: '15m ago', code: 'Code Yellow', color: '#f59e0b' },
-  { id: 'r3', title: 'Supply: O+ Blood Unit', type: 'transit', location: 'Blood Bank - OR-3', updatedAt: '5m ago', code: 'Code Green', color: '#10b981' },
-  { id: 'r4', title: 'Code Blue: Ward B-12', type: 'active', location: 'Ward B - Floor 5', updatedAt: '8m ago', code: 'Code Blue', color: '#3b82f6' },
-  { id: 'r5', title: 'Code Pink: NICU Alert', type: 'urgent', location: 'NICU - Floor 3', updatedAt: '10m ago', code: 'Code Pink', color: '#ec4899' },
-  { id: 'r6', title: 'Equipment: Ventilator', type: 'transit', location: 'Storage - ICU Wing', updatedAt: '12m ago', code: 'Code Orange', color: '#f97316' },
+  { id: 'a1', title: 'Code Blue: Cardiac Arrest', type: 'urgent', location: 'ICU - Room 6', updatedAt: '2m ago', code: 'Code Blue', color: '#3b82f6' },
+  { id: 'a2', title: 'Code Red: Fire Alert', type: 'active', location: 'ER - Room 10', updatedAt: '5m ago', code: 'Code Red', color: '#ef4444' },
+  { id: 'a3', title: 'Code Pink: NICU Alert', type: 'pending', location: 'NICU - Room 4', updatedAt: '8m ago', code: 'Code Pink', color: '#ec4899' },
+  { id: 'a4', title: 'Code Yellow: Bomb Threat', type: 'resolved', location: 'OR - Room 2', updatedAt: '25m ago', code: 'Code Yellow', color: '#f59e0b' },
+  { id: 'a5', title: 'Code Blue: Medical Emergency', type: 'resolved', location: 'Ward B - Room 12', updatedAt: '1h ago', code: 'Code Blue', color: '#3b82f6' },
 ]
 
 export const MOCK_ACTIVE_CODES: ActiveCode[] = [

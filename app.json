@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.riyada.codeconnect",
       "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID."
+        "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -43,6 +44,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1ae5d4fe-2950-4061-aeab-a3e2f1920daf"
+      }
     }
   }
 }
