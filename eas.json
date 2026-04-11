@@ -24,7 +24,7 @@
       },
       "env": {
         "EXPO_PUBLIC_USE_MOCK_DATA": "false"
-      }
+      } 
     },
     "production": {
       "distribution": "store",

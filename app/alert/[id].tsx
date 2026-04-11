@@ -25,7 +25,7 @@ export default function AlertDetailScreen() {
   const { colors, t } = useApp();
   const [elapsed, setElapsed] = useState(0);
 
-  const { data: alert, isLoading } = useAlertDetail(id ?? "");
+  const { data: alert, isLoading, isError, error, refetch } = useAlertDetail(id ?? "");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,8 +46,18 @@ export default function AlertDetailScreen() {
         <View style={{ width: 32 }} />
       </View>
 
-      {isLoading || !alert ? (
+      {isLoading ? (
         <AlertDetailSkeleton />
+      ) : isError || !alert ? (
+        <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+          <Feather name="alert-circle" size={40} color={colors.danger} />
+          <Text style={[styles.errorText, { color: colors.danger }]}>
+            {error?.message ?? t("common.errorGeneric")}
+          </Text>
+          <Pressable style={[styles.retryBtn, { backgroundColor: colors.primary }]} onPress={() => refetch()}>
+            <Text style={[styles.retryText, { color: colors.heroText }]}>{t("common.retry")}</Text>
+          </Pressable>
+        </View>
       ) : (
         <ScrollView
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
@@ -265,5 +275,27 @@ const styles = StyleSheet.create({
   actionGrow: {
     flex: 1,
     alignSelf: "stretch",
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+  },
+  retryBtn: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  retryText: {
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
   },
 });
