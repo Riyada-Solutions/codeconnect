@@ -147,6 +147,8 @@ const translations: Record<string, Record<Language, string>> = {
   "alertDetail.noResponders": { en: "No responders yet", ar: "\u0644\u0627 \u064a\u0648\u062c\u062f \u0645\u0633\u062a\u062c\u064a\u0628\u0648\u0646 \u0628\u0639\u062f" },
   "alertDetail.respond": { en: "Respond", ar: "\u0627\u0633\u062a\u062c\u0627\u0628\u0629" },
   "alertDetail.escalate": { en: "Escalate", ar: "\u062a\u0635\u0639\u064a\u062f" },
+  "alertDetail.notes": { en: "Notes", ar: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a" },
+  "alertDetail.notesPlaceholder": { en: "Add a note about this alert...", ar: "\u0623\u0636\u0641 \u0645\u0644\u0627\u062d\u0638\u0629 \u062d\u0648\u0644 \u0647\u0630\u0627 \u0627\u0644\u062a\u0646\u0628\u064a\u0647..." },
   "notifications.title": { en: "Notifications", ar: "\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a" },
   "notifications.empty": { en: "No notifications", ar: "\u0644\u0627 \u062a\u0648\u062c\u062f \u0625\u0634\u0639\u0627\u0631\u0627\u062a" },
   "emergency.title": { en: "New emergency request", ar: "\u0637\u0644\u0628 \u0637\u0648\u0627\u0631\u0626 \u062c\u062f\u064a\u062f" },

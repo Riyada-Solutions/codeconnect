@@ -28,6 +28,7 @@ export default function IncomingAlertScreen() {
     floor: string;
     room: string;
     department: string;
+    notes: string;
   }>();
   const insets = useSafeAreaInsets();
   const { colors, t, isDark } = useApp();
@@ -157,6 +158,18 @@ export default function IncomingAlertScreen() {
               <Text style={[styles.locationValue, { color: textPrimary }]}>{params.department || "Cardiology"}</Text>
             </View>
           </View>
+
+          {params.notes ? (
+            <View style={styles.locationRow}>
+              <View style={[styles.locationIcon, { backgroundColor: codeColor + "20" }]}>
+                <Feather name="file-text" size={16} color={codeColor} />
+              </View>
+              <View style={styles.notesValueWrap}>
+                <Text style={[styles.locationLabel, { color: textSecondary }]}>{t("alertDetail.notes")}</Text>
+                <Text style={[styles.locationValue, { color: textPrimary }]}>{params.notes}</Text>
+              </View>
+            </View>
+          ) : null}
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(600).duration(400)} style={styles.footerSection}>
@@ -322,6 +335,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Inter_600SemiBold",
     marginTop: 1,
+  },
+  notesValueWrap: {
+    flex: 1,
   },
   actionsBar: {
     position: "absolute",

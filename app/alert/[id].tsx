@@ -121,6 +121,16 @@ export default function AlertDetailScreen() {
             )}
           </View>
 
+          {alert.notes ? (
+            <View style={[styles.notesCard, { backgroundColor: colors.card }]}>
+              <View style={styles.notesHeader}>
+                <Feather name="file-text" size={14} color={colors.primary} />
+                <Text style={[styles.infoTitle, { color: colors.text, marginBottom: 0 }]}>{t("alertDetail.notes")}</Text>
+              </View>
+              <Text style={[styles.notesText, { color: colors.textMuted }]}>{alert.notes}</Text>
+            </View>
+          ) : null}
+
           <View style={styles.actions}>
             <View style={styles.actionFlex}>
               <CustomButton title={t("alertDetail.respond")} onPress={() => {}} color={colors.primary} height={48} style={styles.actionGrow} />
@@ -275,6 +285,21 @@ const styles = StyleSheet.create({
   actionGrow: {
     flex: 1,
     alignSelf: "stretch",
+  },
+  notesCard: {
+    borderRadius: 14,
+    padding: 16,
+    gap: 10,
+  },
+  notesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  notesText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 22,
   },
   errorContainer: {
     flex: 1,

@@ -110,6 +110,7 @@ export default function NewEmergencyScreen() {
                 floor: floor,
                 room: room.trim(),
                 department: department,
+                notes: notes.trim(),
               },
             });
           },

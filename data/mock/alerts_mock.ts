@@ -7,7 +7,7 @@ export const MOCK_ALERTS: AlertDetail[] = [
   {
     id: 'a1', title: 'Code Blue: Cardiac Arrest', type: 'Code Blue', color: '#3b82f6',
     location: 'ICU - Room 6', status: 'active', responders: 3, timestamp: '2m ago',
-    building: 'Main Hospital', floor: 'Floor 4', department: 'ICU', room: 'Room 6', notes: null,
+    building: 'Main Hospital', floor: 'Floor 4', department: 'ICU', room: 'Room 6', notes: 'Patient unresponsive, CPR in progress. Defibrillator requested.',
     respondersList: [
       { id: 'r1', name: 'Dr. Ahmed Hassan', role: 'Cardiologist', avatar: 'AH', respondedAt: '1m ago' },
       { id: 'r2', name: 'Nurse Fatima Ali', role: 'ICU Nurse', avatar: 'FA', respondedAt: '2m ago' },
@@ -17,7 +17,7 @@ export const MOCK_ALERTS: AlertDetail[] = [
   {
     id: 'a2', title: 'Code Red: Fire Alert', type: 'Code Red', color: '#ef4444',
     location: 'ER - Room 10', status: 'active', responders: 5, timestamp: '5m ago',
-    building: 'Emergency Wing', floor: 'Floor 1', department: 'Emergency', room: 'Room 10', notes: null,
+    building: 'Emergency Wing', floor: 'Floor 1', department: 'Emergency', room: 'Room 10', notes: 'Smoke detected near east corridor. Evacuation initiated.',
     respondersList: [
       { id: 'r4', name: 'Dr. Layla Noor', role: 'ER Physician', avatar: 'LN', respondedAt: '3m ago' },
       { id: 'r5', name: 'Tech. Samir Raza', role: 'Fire Safety', avatar: 'SR', respondedAt: '4m ago' },
