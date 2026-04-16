@@ -14,7 +14,7 @@ export const MOCK_NOTIFICATIONS: AppNotification[] = [
 export async function mockFetchNotifications(): Promise<AppNotification[]> {
   await mockDelay()
   return MOCK_NOTIFICATIONS
-}
+} 
 
 export async function mockMarkNotificationRead(_id: string): Promise<void> {
   await mockDelay(200)
