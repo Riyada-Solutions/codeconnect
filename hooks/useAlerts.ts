@@ -5,6 +5,10 @@ import {
   respondToAlert,
   escalateAlert,
   activateAlert,
+  fetchBuildings,
+  fetchFloors,
+  fetchDepartments,
+  fetchRooms,
 } from '@/data/alert_repository'
 import type { ActivateAlertRequest, ActivateAlertIdRequest } from '@/types/alert'
 
@@ -55,5 +59,40 @@ export function useActivateAlert() {
       queryClient.invalidateQueries({ queryKey: ['alerts'] })
       queryClient.invalidateQueries({ queryKey: ['home'] })
     },
+  })
+}
+
+export function useBuildings() {
+  return useQuery({
+    queryKey: ['locations', 'buildings'],
+    queryFn: fetchBuildings,
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useFloors(buildingId: number | null) {
+  return useQuery({
+    queryKey: ['locations', 'floors', buildingId],
+    queryFn: () => fetchFloors(buildingId!),
+    enabled: buildingId !== null,
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useDepartments(buildingId: number | null, floorId: number | null) {
+  return useQuery({
+    queryKey: ['locations', 'departments', buildingId, floorId],
+    queryFn: () => fetchDepartments(buildingId!, floorId!),
+    enabled: buildingId !== null && floorId !== null,
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useRooms(buildingId: number | null, floorId: number | null, departmentId: number | null) {
+  return useQuery({
+    queryKey: ['locations', 'rooms', buildingId, floorId, departmentId],
+    queryFn: () => fetchRooms(buildingId!, floorId!, departmentId!),
+    enabled: buildingId !== null && floorId !== null && departmentId !== null,
+    staleTime: 5 * 60_000,
   })
 }

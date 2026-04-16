@@ -1,6 +1,6 @@
-
 packages:
   - "."
+  - "lib/*"
 
 autoInstallPeers: false
 

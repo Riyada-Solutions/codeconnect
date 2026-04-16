@@ -5,9 +5,10 @@ import {
   mockFetchAlertById,
   mockFetchActiveRequests,
   mockFetchActiveCodes,
+  mockFetchHomeData,
   mockRespondToAlert,
 } from './mock/alerts_mock'
-import type { Alert, AlertDetail, ActiveRequest, ActiveCode, ActivateAlertRequest, ActivateAlertIdRequest } from '@/types/alert'
+import type { Alert, AlertDetail, ActiveRequest, ActiveCode, HomeData, ActivateAlertRequest, ActivateAlertIdRequest, LocationOption } from '@/types/alert'
 
 export async function fetchAlerts(): Promise<Alert[]> {
   if (ENV.USE_MOCK_DATA) return mockFetchAlerts()
@@ -21,6 +22,12 @@ export async function fetchAlertById(id: string): Promise<AlertDetail> {
   return data.data
 }
 
+export async function fetchHomeData(): Promise<HomeData> {
+  if (ENV.USE_MOCK_DATA) return mockFetchHomeData()
+  const { data } = await apiClient.get<{ data: HomeData }>('/home')
+  return data.data
+}
+
 export async function fetchActiveRequests(): Promise<ActiveRequest[]> {
   if (ENV.USE_MOCK_DATA) return mockFetchActiveRequests()
   const { data } = await apiClient.get<{ data: ActiveRequest[] }>('/home/active-requests')
@@ -30,6 +37,48 @@ export async function fetchActiveRequests(): Promise<ActiveRequest[]> {
 export async function fetchActiveCodes(): Promise<ActiveCode[]> {
   if (ENV.USE_MOCK_DATA) return mockFetchActiveCodes()
   const { data } = await apiClient.get<{ data: ActiveCode[] }>('/alerts?status=active')
+  return data.data
+}
+
+export async function fetchBuildings(): Promise<LocationOption[]> {
+  if (ENV.USE_MOCK_DATA) {
+    const { mockBuildings } = await import('./mock/alerts_mock')
+    return mockBuildings
+  }
+  const { data } = await apiClient.get<{ data: LocationOption[] }>('/settings/locations/buildings')
+  return data.data
+}
+
+export async function fetchFloors(buildingId: number): Promise<LocationOption[]> {
+  if (ENV.USE_MOCK_DATA) {
+    const { mockFloors } = await import('./mock/alerts_mock')
+    return mockFloors
+  }
+  const { data } = await apiClient.get<{ data: LocationOption[] }>('/settings/locations/floors', {
+    params: { building_id: buildingId },
+  })
+  return data.data
+}
+
+export async function fetchDepartments(buildingId: number, floorId: number): Promise<LocationOption[]> {
+  if (ENV.USE_MOCK_DATA) {
+    const { mockDepartments } = await import('./mock/alerts_mock')
+    return mockDepartments
+  }
+  const { data } = await apiClient.get<{ data: LocationOption[] }>('/settings/locations/departments', {
+    params: { building_id: buildingId, floor_id: floorId },
+  })
+  return data.data
+}
+
+export async function fetchRooms(buildingId: number, floorId: number, departmentId: number): Promise<LocationOption[]> {
+  if (ENV.USE_MOCK_DATA) {
+    const { mockRooms } = await import('./mock/alerts_mock')
+    return mockRooms
+  }
+  const { data } = await apiClient.get<{ data: LocationOption[] }>('/settings/locations/rooms', {
+    params: { building_id: buildingId, floor_id: floorId, department_id: departmentId },
+  })
   return data.data
 }
 

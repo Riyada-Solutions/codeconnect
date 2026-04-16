@@ -46,6 +46,24 @@ export interface ActiveRequest {
   color: string
 }
 
+export interface ApiCodeType {
+  id: number
+  name: string
+  color: string
+  description: string
+}
+
+export interface HomeData {
+  activeRequests: ActiveRequest[]
+  codeTypes: ApiCodeType[]
+  unreadNotificationCount: number
+}
+
+export interface LocationOption {
+  id: number
+  name: string
+}
+
 // String-based (legacy, still accepted by API)
 export interface ActivateAlertRequest {
   type: string

@@ -1,4 +1,4 @@
-import type { Alert, AlertDetail, ActiveRequest, ActiveCode } from '@/types/alert'
+import type { Alert, AlertDetail, ActiveRequest, ActiveCode, ApiCodeType, HomeData, LocationOption } from '@/types/alert'
 
 const mockDelay = (ms = 500) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms))
@@ -82,6 +82,55 @@ export async function mockFetchActiveCodes(): Promise<ActiveCode[]> {
   return MOCK_ACTIVE_CODES
 }
 
+export const MOCK_CODE_TYPES: ApiCodeType[] = [
+  { id: 1, name: 'Code Blue', color: '#3B82F6', description: 'Medical emergency – cardiac/respiratory arrest' },
+  { id: 2, name: 'Code Red', color: '#EF4444', description: 'Fire emergency' },
+  { id: 3, name: 'Code White', color: '#F9FAFB', description: 'Violent or threatening situation' },
+  { id: 4, name: 'Code Black', color: '#111827', description: 'Bomb threat' },
+  { id: 5, name: 'Code Yellow', color: '#F59E0B', description: 'Missing patient' },
+  { id: 6, name: 'Code Pink', color: '#EC4899', description: 'Infant/child abduction' },
+]
+
+export async function mockFetchHomeData(): Promise<HomeData> {
+  await mockDelay(400)
+  return {
+    activeRequests: MOCK_ACTIVE_REQUESTS,
+    codeTypes: MOCK_CODE_TYPES,
+    unreadNotificationCount: 3,
+  }
+}
+
 export async function mockRespondToAlert(_id: string): Promise<void> {
   await mockDelay(400)
 }
+
+export const mockBuildings: LocationOption[] = [
+  { id: 1, name: 'Main Building' },
+  { id: 2, name: 'Emergency Wing' },
+  { id: 3, name: "Women's Center" },
+  { id: 4, name: 'Surgical Center' },
+]
+
+export const mockFloors: LocationOption[] = [
+  { id: 1, name: 'Floor 1' },
+  { id: 2, name: 'Floor 2' },
+  { id: 3, name: 'Floor 3' },
+  { id: 4, name: 'Floor 4' },
+]
+
+export const mockDepartments: LocationOption[] = [
+  { id: 1, name: 'ICU' },
+  { id: 2, name: 'Emergency' },
+  { id: 3, name: 'NICU' },
+  { id: 4, name: 'Operating Room' },
+  { id: 5, name: 'General Ward' },
+]
+
+export const mockRooms: LocationOption[] = [
+  { id: 1, name: 'Room 1' },
+  { id: 2, name: 'Room 2' },
+  { id: 3, name: 'Room 3' },
+  { id: 4, name: 'Room 4' },
+  { id: 5, name: 'Room 5' },
+  { id: 6, name: 'Room 6' },
+]
