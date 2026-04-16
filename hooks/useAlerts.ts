@@ -6,7 +6,7 @@ import {
   escalateAlert,
   activateAlert,
 } from '@/data/alert_repository'
-import type { ActivateAlertRequest } from '@/types/alert'
+import type { ActivateAlertRequest, ActivateAlertIdRequest } from '@/types/alert'
 
 export function useAlerts() {
   return useQuery({
@@ -50,7 +50,7 @@ export function useEscalateAlert() {
 export function useActivateAlert() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (body: ActivateAlertRequest) => activateAlert(body),
+    mutationFn: (body: ActivateAlertRequest | ActivateAlertIdRequest) => activateAlert(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['alerts'] })
       queryClient.invalidateQueries({ queryKey: ['home'] })

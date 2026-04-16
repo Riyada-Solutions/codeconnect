@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s https://code.careconnectksa.com/api/alerts/1 -H 'Authorization: Bearer 3|f59tyEEnXhm3PjosAnD1lJScCJ9lhmMhiLMnHQCz295e59dd' -H 'Accept: application/json')",
+      "Bash(python -m json.tool)"
+    ]
+  }
+}

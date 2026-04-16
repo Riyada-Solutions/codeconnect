@@ -25,7 +25,7 @@ export default function AlertDetailScreen() {
   const { colors, t } = useApp();
   const [elapsed, setElapsed] = useState(0);
 
-  const { data: alert, isLoading } = useAlertDetail(id ?? "");
+  const { data: alert, isLoading, isError, error, refetch } = useAlertDetail(id ?? "");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,8 +46,18 @@ export default function AlertDetailScreen() {
         <View style={{ width: 32 }} />
       </View>
 
-      {isLoading || !alert ? (
+      {isLoading ? (
         <AlertDetailSkeleton />
+      ) : isError || !alert ? (
+        <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+          <Feather name="alert-circle" size={40} color={colors.danger} />
+          <Text style={[styles.errorText, { color: colors.danger }]}>
+            {error?.message ?? t("common.errorGeneric")}
+          </Text>
+          <Pressable style={[styles.retryBtn, { backgroundColor: colors.primary }]} onPress={() => refetch()}>
+            <Text style={[styles.retryText, { color: colors.heroText }]}>{t("common.retry")}</Text>
+          </Pressable>
+        </View>
       ) : (
         <ScrollView
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
@@ -63,7 +73,7 @@ export default function AlertDetailScreen() {
               <Feather name="clock" size={14} color="rgba(255,255,255,0.8)" />
               <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
             </View>
-            <Badge label={alert.status} variant={alert.status === "active" ? "urgent" : alert.status === "pending" ? "pending" : "resolved"} />
+            <Badge label={alert.status} variant={alert.status === "active" ? "urgent" : "resolved"} />
           </View>
 
           <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
@@ -110,6 +120,16 @@ export default function AlertDetailScreen() {
               ))
             )}
           </View>
+
+          {alert.notes ? (
+            <View style={[styles.notesCard, { backgroundColor: colors.card }]}>
+              <View style={styles.notesHeader}>
+                <Feather name="file-text" size={14} color={colors.primary} />
+                <Text style={[styles.infoTitle, { color: colors.text, marginBottom: 0 }]}>{t("alertDetail.notes")}</Text>
+              </View>
+              <Text style={[styles.notesText, { color: colors.textMuted }]}>{alert.notes}</Text>
+            </View>
+          ) : null}
 
           <View style={styles.actions}>
             <View style={styles.actionFlex}>
@@ -265,5 +285,42 @@ const styles = StyleSheet.create({
   actionGrow: {
     flex: 1,
     alignSelf: "stretch",
+  },
+  notesCard: {
+    borderRadius: 14,
+    padding: 16,
+    gap: 10,
+  },
+  notesHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  notesText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 22,
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+  },
+  retryBtn: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  retryText: {
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
   },
 });

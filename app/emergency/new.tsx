@@ -25,9 +25,7 @@ const FLOORS = ["Floor 1", "Floor 2", "Floor 3", "Floor 4", "Floor 5"];
 const DEPARTMENTS = ["ICU", "Emergency", "NICU", "Operating Room", "General Ward", "Radiology"];
 
 const SHEET_MAX_HEIGHT = Math.round(Dimensions.get("window").height * 0.98);
-function useDecodedCodeParam(): string {
-  const params = useLocalSearchParams<{ code?: string | string[] }>();
-  const raw = params.code;
+function decodeParam(raw: string | string[] | undefined): string {
   const single = Array.isArray(raw) ? raw[0] : raw;
   if (!single) return "";
   try {
@@ -38,7 +36,14 @@ function useDecodedCodeParam(): string {
 }
 
 export default function NewEmergencyScreen() {
-  const codeParam = useDecodedCodeParam();
+  const params = useLocalSearchParams<{
+    code?: string | string[];
+    building?: string | string[];
+    floor?: string | string[];
+    department?: string | string[];
+    room?: string | string[];
+  }>();
+  const codeParam = decodeParam(params.code);
   const insets = useSafeAreaInsets();
   const { colors, t, isDark } = useApp();
 
@@ -50,10 +55,10 @@ export default function NewEmergencyScreen() {
     }
   }, [codeParam, activeCode]);
 
-  const [building, setBuilding] = useState("");
-  const [floor, setFloor] = useState("");
-  const [department, setDepartment] = useState("");
-  const [room, setRoom] = useState("");
+  const [building, setBuilding] = useState(decodeParam(params.building));
+  const [floor, setFloor] = useState(decodeParam(params.floor));
+  const [department, setDepartment] = useState(decodeParam(params.department));
+  const [room, setRoom] = useState(decodeParam(params.room));
   const [notes, setNotes] = useState("");
   const [showBuildingPicker, setShowBuildingPicker] = useState(false);
   const [showFloorPicker, setShowFloorPicker] = useState(false);
@@ -110,6 +115,7 @@ export default function NewEmergencyScreen() {
                 floor: floor,
                 room: room.trim(),
                 department: department,
+                notes: notes.trim(),
               },
             });
           },

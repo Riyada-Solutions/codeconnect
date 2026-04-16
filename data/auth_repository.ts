@@ -14,15 +14,15 @@ import type {
 
 export async function login(body: LoginRequest): Promise<LoginResponse> {
   if (ENV.USE_MOCK_DATA) return mockLogin(body)
-  const { data } = await apiClient.post<LoginResponse>('/auth/login', body)
-  await AsyncStorage.setItem('access_token', data.accessToken)
-  return data
+  const { data } = await apiClient.post<{ data: LoginResponse }>('/auth/login', body)
+  await AsyncStorage.setItem('access_token', data.data.accessToken)
+  return data.data
 }
 
 export async function getMe(): Promise<User> {
   if (ENV.USE_MOCK_DATA) return mockGetMe()
-  const { data } = await apiClient.get<User>('/me')
-  return data
+  const { data } = await apiClient.get<{ data: User }>('/me')
+  return data.data
 }
 
 export async function register(body: RegisterRequest): Promise<void> {
@@ -48,6 +48,7 @@ export async function forgotPassword(email: string): Promise<void> {
 
 export async function resetPassword(body: ResetPasswordRequest): Promise<void> {
   if (ENV.USE_MOCK_DATA) return
+  // API requires: { email, resetToken, newPassword }
   await apiClient.post('/auth/reset-password', body)
 }
 

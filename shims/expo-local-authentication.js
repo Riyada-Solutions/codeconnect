@@ -1,17 +1,23 @@
-export async function authenticateAsync() {
-  return { success: true };
-}
-export async function hasHardwareAsync() {
+/**
+ * Fallback when `expo-local-authentication` is not installed (e.g. pnpm EPERM on Windows).
+ * Metro resolves here only if the real package is missing; see metro.config.js.
+ */
+"use strict";
+
+async function hasHardwareAsync() {
   return false;
 }
-export async function isEnrolledAsync() {
+
+async function isEnrolledAsync() {
   return false;
 }
-export async function supportedAuthenticationTypesAsync() {
-  return [];
+
+async function authenticateAsync() {
+  return { success: false };
 }
-export const AuthenticationType = {
-  FINGERPRINT: 1,
-  FACIAL_RECOGNITION: 2,
-  IRIS: 3,
+
+module.exports = {
+  hasHardwareAsync,
+  isEnrolledAsync,
+  authenticateAsync,
 };

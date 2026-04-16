@@ -1,6 +1,9 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ENV } from '@/constants/env'
+import { log } from '@/utils/logger'
+
+const TAG = 'API Request'
 
 export const apiClient = axios.create({
   baseURL: ENV.API_BASE_URL,
@@ -11,12 +14,29 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('access_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
+
+  log(
+    TAG,
+    `Request \n${config.method?.toUpperCase()} : ${config.baseURL}${config.url}  \nParameter: ${JSON.stringify(config.params ?? {})}; \nBody: ${config.data ? JSON.stringify(config.data) : '{}'}\nEND Request`,
+  )
+
   return config
 })
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const { method, baseURL, url } = response.config
+    log(
+      TAG,
+      `Response \nStatus: ${response.status}\nURL: ${method?.toUpperCase()} ${baseURL}${url}\nResponse: ${JSON.stringify(response.data)}\nReceive END HTTP`,
+    )
+    return response
+  },
   (error) => {
+    log(
+      TAG,
+      `ERROR[${error.response?.status ?? 'ERR'}] \nURL: ${error.config?.baseURL}${error.config?.url} \nRequest Data[${JSON.stringify(error.response?.data ?? {})}]`,
+    )
     const message =
       error.response?.data?.message ?? error.message ?? 'Unknown error'
     throw new Error(message)

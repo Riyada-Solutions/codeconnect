@@ -2,81 +2,67 @@
 
 ## Overview
 
-CodeConnect — hospital emergency response mobile app for Emdad Arabia. Built with Expo / React Native at the project root.
+pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
 ## Stack
 
-- **Package manager**: pnpm
+- **Monorepo tool**: pnpm workspaces
 - **Node.js version**: 24
+- **Package manager**: pnpm
 - **TypeScript version**: 5.9
-- **Framework**: Expo SDK 54 + React Native
-- **Router**: Expo Router (file-based)
-- **Server state**: TanStack React Query
-- **HTTP client**: Axios
-- **Animations**: react-native-reanimated
-- **Push notifications**: Firebase Cloud Messaging + expo-notifications (planned)
+- **API framework**: Express 5
+- **Database**: PostgreSQL + Drizzle ORM
+- **Validation**: Zod (`zod/v4`), `drizzle-zod`
+- **API codegen**: Orval (from OpenAPI spec)
+- **Build**: esbuild (CJS bundle)
+- **Mobile**: Expo (React Native) with TypeScript
 
-## Project Structure
+## Artifacts
 
-The Expo app lives at the **project root** (not in `artifacts/`).
+### CodeConnect (Mobile App)
+- **Path**: `artifacts/codeconnect`
+- **Type**: Expo (React Native)
+- **Description**: Hospital emergency response coordination system for Emdad Arabia
+- **Brand Color**: #2daaae (teal)
+- **Features**:
+  - Splash screen with animated logo
+  - Full auth flow: Login, Register, Forgot Password, OTP Verification, New Password, Verify OTP
+  - Home screen with emergency code list cards and active requests
+  - Alerts screen with filterable alert list
+  - Profile screen with colored-icon menu rows
+  - Alert detail with responder tracking and timer
+  - Create emergency request with cascading location dropdowns
+  - Settings with dark mode toggle and EN/AR language selector
+  - Help & Support screen (WhatsApp/Facebook/Email + message form)
+  - Change Password screen
+  - Incoming Emergency Alert screen (notification to doctors after request creation)
+  - Shared screens: Privacy Policy, Terms of Service, About, Notifications, Edit Profile
+  - Full dark mode support across all screens
+  - Full EN/AR bilingual translation system
+- **Architecture**:
+  - `AppContext` (`contexts/AppContext.tsx`): central context providing `colors`, `t()`, `isDark`, `toggleTheme`, `language`, `setLanguage`
+  - Theme defined in `constants/theme.ts` with `lightTheme`/`darkTheme` objects and `ThemeColors` type
+  - All screens use `useApp()` hook — no direct theme imports
+  - Translation keys stored in AppContext with `Record<string, Record<Language, string>>` format
+  - Theme/language persisted via AsyncStorage (`app_theme`, `app_language`)
+- **Design System**:
+  - Primary: #2daaae, Dark: #1d8a8e, Deep: #0f5a5c
+  - Light: bg #f0f5f5, card #ffffff, text #0d2526, secondary #4a7072, muted #93b5b6
+  - Dark: bg #0d1b1c, card #14292a, text #e4f7f7, secondary #93b5b6, muted #4a7072
+  - Code colors: Blue #3b82f6, Red #ef4444, Pink #ec4899, Yellow #f59e0b, Orange #f97316, Green #10b981, Purple #8b5cf6
+  - Font: Inter (400/500/600/700)
+  - Border radius: 12-14px
 
-```
-/
-├── app/                  # Expo Router screens
-│   ├── (auth)/           # Login, Register, OTP, Reset Password
-│   ├── (tabs)/           # Home, Alerts, Profile
-│   ├── alert/            # Alert detail [id]
-│   └── emergency/        # Activate emergency flow
-├── components/ui/        # Reusable UI components
-├── constants/            # Theme, enums, emergency codes
-├── contexts/             # AppContext (theme + i18n)
-├── data/                 # Data layer (repositories + mock)
-│   └── mock/             # Mock data (USE_MOCK_DATA=true)
-├── hooks/                # Custom React hooks
-├── types/                # Shared TypeScript interfaces
-├── utils/                # Helper functions
-├── assets/               # Images, fonts, icons
-├── shims/                # Module shims (expo-local-authentication)
-├── scripts/              # Dev/build scripts
-├── server/               # Production serve script
-├── AGENTS.md             # Coding rules & architecture guide
-└── API_SPEC.md           # Backend API contract
-```
-
-## Architecture
-
-- **Three-layer pattern**: Screen → React Query Hook → Repository (data/)
-- **Mock/Real switching**: `USE_MOCK_DATA` env variable controls data source
-- **AppContext**: central context providing `colors`, `t()`, `isDark`, `toggleTheme`, `language`, `setLanguage`, `isRTL`
-- **Theme**: `constants/theme.ts` with `lightTheme`/`darkTheme` + `ThemeColors` type
-- All screens use `useApp()` — no direct theme imports
-
-## Design System
-
-- Primary: #2daaae (teal), Dark: #1d8a8e, Deep: #0f5a5c
-- Light mode: bg #f0f5f5, card #ffffff, text #0d2526
-- Dark mode: bg #0d1b1c, card #14292a, text #e4f7f7
-- Font: Inter (400/500/600/700)
-- Border radius: 12-16px
+### API Server
+- **Path**: `artifacts/api-server`
+- **Type**: Express 5
 
 ## Key Commands
 
-- `pnpm run dev` — start Expo dev server
-- `pnpm run build` — build for production
-- `pnpm run serve` — serve production build
-- `pnpm run typecheck` — TypeScript check
+- `pnpm run typecheck` — full typecheck across all packages
+- `pnpm run build` — typecheck + build all packages
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
+- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
+- `pnpm --filter @workspace/api-server run dev` — run API server locally
 
-## iOS Publishing
-
-- Bundle ID: `com.emdadarabia.codeconnect`
-- Expo account: `ahmed_asia`
-- Apple Team: `N3R8MF955Y` (Epal solutions, inc)
-- EAS Project ID: `1ae5d4fe-2950-4061-aeab-a3e2f1920daf`
-- Distribution Certificate serial: `1D5D4DDA1155041ADBA77983EF5FFAB8` (expires Apr 2027)
-- Provisioning Profile: `9Y7QLN52B7` (expires Apr 2027)
-- Publishing: Run `eas build` and `eas submit` from a local machine (Replit blocks git operations EAS needs)
-
-## Key Documentation
-
-- `AGENTS.md` — Complete coding rules, patterns, templates, and architecture decisions
-- `API_SPEC.md` — All backend API endpoints the mobile app requires
+See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
