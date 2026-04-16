@@ -19,6 +19,7 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import CustomButton from "@/components/ui/CustomButton";
+import { login } from "@/data/auth_repository";
 import { useApp } from "@/contexts/AppContext";
 
 /** Reference UI: teal hero fading to deep teal (light) / darker slate (dark). */
@@ -60,7 +61,7 @@ export default function LoginScreen() {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const newErrors: { username?: string; password?: string } = {};
     if (!username.trim()) newErrors.username = t("login.usernameRequired");
     if (!password.trim()) newErrors.password = t("login.passwordRequired");
@@ -71,10 +72,15 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await login({ username: username.trim(), password });
       router.replace("/(tabs)");
-    }, 800);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t("login.loginFailed");
+      setErrors({ password: message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goGuest = () => {
@@ -178,7 +184,7 @@ export default function LoginScreen() {
             <View style={styles.loginActionsRow}>
               <View style={styles.buttonFlex}>
                 <CustomButton
-                  onPress={handleLogin}
+                  onPress={() => { void handleLogin(); }}
                   loading={loading}
                   widerPadding
                   height={52}

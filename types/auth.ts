@@ -2,10 +2,10 @@ export interface User {
   id: string
   name: string
   role: string
-  hospital: string
+  hospital: string | null
   email: string
-  phone: string
-  department: string
+  phone: string | null
+  department: string | null
   employeeId: string
   initials?: string
   avatarUrl?: string | null
@@ -35,8 +35,18 @@ export interface VerifyOtpRequest {
 }
 
 export interface ResetPasswordRequest {
+  email: string
   resetToken: string
   newPassword: string
+}
+
+export interface SessionResponse {
+  user: User
+  expiresAt: string
+}
+
+export interface HeartbeatResponse {
+  expiresAt: string
 }
 
 export interface ChangePasswordRequest {

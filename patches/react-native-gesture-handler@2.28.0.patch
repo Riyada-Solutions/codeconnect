@@ -1,0 +1,301 @@
+diff --git a/src/components/DrawerLayout.tsx b/src/components/DrawerLayout.tsx
+index 0bebe52f6951f88860809040b7428ceb1d65ce48..913bdd7f53295ef44d5c47493e32635b2d1dd847 100644
+--- a/src/components/DrawerLayout.tsx
++++ b/src/components/DrawerLayout.tsx
+@@ -71,7 +71,7 @@ export type DrawerKeyboardDismissMode = 'none' | 'on-drag';
+ 
+ // Animated.AnimatedInterpolation has been converted to a generic type
+ // in @types/react-native 0.70. This way we can maintain compatibility
+-// with all versions of @types/react-native`
++// with all versions of @types/react-native.
+ type AnimatedInterpolation = ReturnType<Animated.Value['interpolate']>;
+ 
+ /**
+diff --git a/src/components/Pressable/Pressable.tsx b/src/components/Pressable/Pressable.tsx
+index 55e597f33844167eca1f8f9174a77fd52f653083..2227cfb3ef4acfebe91497d323815022ce610c76 100644
+--- a/src/components/Pressable/Pressable.tsx
++++ b/src/components/Pressable/Pressable.tsx
+@@ -134,7 +134,9 @@ const Pressable = (props: PressableProps) => {
+ 
+   const innerHandlePressIn = useCallback(
+     (event: PressableEvent) => {
+-      onPressIn?.(event);
++      if (onPressIn) {
++        onPressIn(event);
++      }
+       startLongPress(event);
+       setPressedState(true);
+       if (pressDelayTimeoutRef.current) {
+@@ -178,7 +180,7 @@ const Pressable = (props: PressableProps) => {
+   );
+ 
+   const handlePressOut = useCallback(
+-    (event: PressableEvent, success: boolean = true) => {
++    (event: PressableEvent, success?: boolean) => {
+       if (!isCurrentlyPressed.current) {
+         // Some prop configurations may lead to handlePressOut being called mutliple times.
+         return;
+@@ -190,10 +192,14 @@ const Pressable = (props: PressableProps) => {
+         innerHandlePressIn(event);
+       }
+ 
+-      onPressOut?.(event);
++      if (onPressOut) {
++        onPressOut(event);
++      }
+ 
+-      if (isOnPressAllowed.current && success) {
+-        onPress?.(event);
++      if (isOnPressAllowed.current && success !== false) {
++        if (onPress) {
++          onPress(event);
++        }
+       }
+ 
+       handleFinalize();
+@@ -213,43 +219,51 @@ const Pressable = (props: PressableProps) => {
+ 
+   const hoverGesture = useMemo(
+     () =>
++      /* Prevents Hover blocking Gesture.Native() on web */
+       Gesture.Hover()
+-        .manualActivation(true) // Prevents Hover blocking Gesture.Native() on web
++        .manualActivation(true)
+         .cancelsTouchesInView(false)
+         .onBegin((event) => {
+           if (hoverOutTimeout.current) {
+             clearTimeout(hoverOutTimeout.current);
+           }
+           if (delayHoverIn) {
+-            hoverInTimeout.current = setTimeout(
+-              () => onHoverIn?.(gestureToPressableEvent(event)),
+-              delayHoverIn
+-            );
++            hoverInTimeout.current = setTimeout(() => {
++              if (onHoverIn) {
++                onHoverIn(gestureToPressableEvent(event));
++              }
++            }, delayHoverIn);
+             return;
+           }
+-          onHoverIn?.(gestureToPressableEvent(event));
++          if (onHoverIn) {
++            onHoverIn(gestureToPressableEvent(event));
++          }
+         })
+         .onFinalize((event) => {
+           if (hoverInTimeout.current) {
+             clearTimeout(hoverInTimeout.current);
+           }
+           if (delayHoverOut) {
+-            hoverOutTimeout.current = setTimeout(
+-              () => onHoverOut?.(gestureToPressableEvent(event)),
+-              delayHoverOut
+-            );
++            hoverOutTimeout.current = setTimeout(() => {
++              if (onHoverOut) {
++                onHoverOut(gestureToPressableEvent(event));
++              }
++            }, delayHoverOut);
+             return;
+           }
+-          onHoverOut?.(gestureToPressableEvent(event));
++          if (onHoverOut) {
++            onHoverOut(gestureToPressableEvent(event));
++          }
+         }),
+     [delayHoverIn, delayHoverOut, onHoverIn, onHoverOut]
+   );
+ 
+   const pressAndTouchGesture = useMemo(
+     () =>
++      /* Stops long press from blocking Gesture.Native() and from cancelling on touch move */
+       Gesture.LongPress()
+-        .minDuration(INT32_MAX) // Stops long press from blocking Gesture.Native()
+-        .maxDistance(INT32_MAX) // Stops long press from cancelling on touch move
++        .minDuration(INT32_MAX)
++        .maxDistance(INT32_MAX)
+         .cancelsTouchesInView(false)
+         .onTouchesDown((event) => {
+           const pressableEvent = gestureTouchToPressableEvent(event);
+@@ -359,7 +373,9 @@ const Pressable = (props: PressableProps) => {
+ 
+   const setDimensions = useCallback(
+     (event: LayoutChangeEvent) => {
+-      onLayout?.(event);
++      if (onLayout) {
++        onLayout(event);
++      }
+       dimensions.current = event.nativeEvent.layout;
+     },
+     [onLayout]
+diff --git a/src/components/touchables/GenericTouchable.tsx b/src/components/touchables/GenericTouchable.tsx
+index 68982bb94b19b5b3cfe19d037ed36a9de619307b..5eb36b812b378b16426dc07c5f0cfb272e90cd92 100644
+--- a/src/components/touchables/GenericTouchable.tsx
++++ b/src/components/touchables/GenericTouchable.tsx
+@@ -64,9 +64,8 @@ export default class GenericTouchable extends Component<
+   // State of touchable
+   STATE: TouchableState = TOUCHABLE_STATE.UNDETERMINED;
+ 
+-  // handlePressIn in called on first touch on traveling inside component.
+-  // Handles state transition with delay.
+   handlePressIn() {
++    /* handlePressIn: first touch inside; handles transition with delay */
+     if (this.props.delayPressIn) {
+       this.pressInTimeout = setTimeout(() => {
+         this.moveToState(TOUCHABLE_STATE.BEGAN);
+@@ -81,9 +80,8 @@ export default class GenericTouchable extends Component<
+       this.longPressTimeout = setTimeout(this.onLongPressDetected, time);
+     }
+   }
+-  // handleMoveOutside in called on traveling outside component.
+-  // Handles state transition with delay.
+   handleMoveOutside() {
++    /* handleMoveOutside: outside travel; transition with delay */
+     if (this.props.delayPressOut) {
+       this.pressOutTimeout =
+         this.pressOutTimeout ||
+@@ -96,9 +94,12 @@ export default class GenericTouchable extends Component<
+     }
+   }
+ 
+-  // handleGoToUndetermined transits to UNDETERMINED state with proper delay
+   handleGoToUndetermined() {
+-    clearTimeout(this.pressOutTimeout!); // TODO: maybe it can be undefined
++    /* transits to UNDETERMINED with proper delay */
++    const pendingPressOut = this.pressOutTimeout;
++    if (pendingPressOut != null) {
++      clearTimeout(pendingPressOut);
++    }
+     if (this.props.delayPressOut) {
+       this.pressOutTimeout = setTimeout(() => {
+         if (this.STATE === TOUCHABLE_STATE.UNDETERMINED) {
+@@ -118,40 +119,56 @@ export default class GenericTouchable extends Component<
+   componentDidMount() {
+     this.reset();
+   }
+-  // Reset timeout to prevent memory leaks.
+   reset() {
++    /* reset timeouts to avoid leaks */
+     this.longPressDetected = false;
+     this.pointerInside = true;
+-    clearTimeout(this.pressInTimeout!);
+-    clearTimeout(this.pressOutTimeout!);
+-    clearTimeout(this.longPressTimeout!);
++    const pressInT = this.pressInTimeout;
++    if (pressInT != null) {
++      clearTimeout(pressInT);
++    }
++    const pressOutT = this.pressOutTimeout;
++    if (pressOutT != null) {
++      clearTimeout(pressOutT);
++    }
++    const longPressT = this.longPressTimeout;
++    if (longPressT != null) {
++      clearTimeout(longPressT);
++    }
+     this.pressOutTimeout = null;
+     this.longPressTimeout = null;
+     this.pressInTimeout = null;
+   }
+ 
+-  // All states' transitions are defined here.
+   moveToState(newState: TouchableState) {
++    /* all state transitions */
+     if (newState === this.STATE) {
+       // Ignore dummy transitions
+       return;
+     }
+     if (newState === TOUCHABLE_STATE.BEGAN) {
+-      // First touch and moving inside
+-      this.props.onPressIn?.();
++      const onPressIn = this.props.onPressIn;
++      if (onPressIn) {
++        onPressIn();
++      }
+     } else if (newState === TOUCHABLE_STATE.MOVED_OUTSIDE) {
+-      // Moving outside
+-      this.props.onPressOut?.();
++      const onPressOut = this.props.onPressOut;
++      if (onPressOut) {
++        onPressOut();
++      }
+     } else if (newState === TOUCHABLE_STATE.UNDETERMINED) {
+-      // Need to reset each time on transition to UNDETERMINED
+       this.reset();
+       if (this.STATE === TOUCHABLE_STATE.BEGAN) {
+-        // ... and if it happens inside button.
+-        this.props.onPressOut?.();
++        const onPressOut2 = this.props.onPressOut;
++        if (onPressOut2) {
++          onPressOut2();
++        }
+       }
+     }
+-    // Finally call lister (used by subclasses)
+-    this.props.onStateChange?.(this.STATE, newState);
++    const onStateChange = this.props.onStateChange;
++    if (onStateChange) {
++      onStateChange(this.STATE, newState);
++    }
+     // ... and make transition.
+     this.STATE = newState;
+   }
+@@ -192,16 +209,20 @@ export default class GenericTouchable extends Component<
+         this.pressOutTimeout === null;
+       this.handleGoToUndetermined();
+       if (shouldCallOnPress) {
+-        // Calls only inside component whether no long press was called previously
+-        this.props.onPress?.();
++        const onPress = this.props.onPress;
++        if (onPress) {
++          onPress();
++        }
+       }
+     }
+   };
+ 
+   onLongPressDetected = () => {
+     this.longPressDetected = true;
+-    // Checked for in the caller of `onLongPressDetected`, but better to check twice
+-    this.props.onLongPress?.();
++    const onLongPress = this.props.onLongPress;
++    if (onLongPress) {
++      onLongPress();
++    }
+   };
+ 
+   componentWillUnmount() {
+@@ -218,7 +239,10 @@ export default class GenericTouchable extends Component<
+ 
+   onMoveOut() {
+     // Long press should no longer be detected
+-    clearTimeout(this.longPressTimeout!);
++    const longPressT = this.longPressTimeout;
++    if (longPressT != null) {
++      clearTimeout(longPressT);
++    }
+     this.longPressTimeout = null;
+     if (this.STATE === TOUCHABLE_STATE.BEGAN) {
+       this.handleMoveOutside();
+@@ -254,7 +278,6 @@ export default class GenericTouchable extends Component<
+       <BaseButton
+         style={this.props.containerStyle}
+         onHandlerStateChange={
+-          // TODO: not sure if it can be undefined instead of null
+           this.props.disabled ? undefined : this.onHandlerStateChange
+         }
+         onGestureEvent={this.onGestureEvent}
+diff --git a/src/handlers/gestures/pinchGesture.ts b/src/handlers/gestures/pinchGesture.ts
+index d001b098898a6fadc0152981035c476d940a8822..e4d1b336b9deeddbf374298c87485eb1c0f4174d 100644
+--- a/src/handlers/gestures/pinchGesture.ts
++++ b/src/handlers/gestures/pinchGesture.ts
+@@ -22,7 +22,7 @@ function changeEventCalculator(
+     };
+   }
+ 
+-  return { ...current, ...changePayload };
++  return Object.assign({}, current, changePayload);
+ }
+ 
+ export class PinchGesture extends ContinousBaseGesture<

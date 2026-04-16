@@ -1,10 +1,14 @@
 export interface AppNotification {
-  id: string
+  id: number
   title: string
   message: string
-  time: string
+  timestamp: string
   read: boolean
-  type: 'urgent' | 'info' | 'success'
+  type: 'emergency' | 'info' | 'warning' | 'success'
+  code_type: string | null
+  code_color: string | null
+  location: string | null
+  activated_by: string | null
 }
 
 export interface NotificationPayload {

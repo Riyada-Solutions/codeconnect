@@ -43,7 +43,7 @@ export default function AlertsScreen() {
 
   const filtered = (alerts ?? []).filter((a) => {
     if (activeFilter === "all") return true;
-    if (activeFilter === "pending") return a.status === "pending";
+    if (activeFilter === "pending") return a.status === "active";
     if (activeFilter === "resolved") return a.status === "resolved";
     if (activeFilter === "codeRed") return a.type === "Code Red";
     if (activeFilter === "codeBlue") return a.type === "Code Blue";

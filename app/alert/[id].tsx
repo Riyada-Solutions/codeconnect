@@ -73,7 +73,7 @@ export default function AlertDetailScreen() {
               <Feather name="clock" size={14} color="rgba(255,255,255,0.8)" />
               <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
             </View>
-            <Badge label={alert.status} variant={alert.status === "active" ? "urgent" : alert.status === "pending" ? "pending" : "resolved"} />
+            <Badge label={alert.status} variant={alert.status === "active" ? "urgent" : "resolved"} />
           </View>
 
           <View style={[styles.infoCard, { backgroundColor: colors.card }]}>

@@ -60,36 +60,106 @@ Staff can activate emergency codes, respond to alerts, and receive real-time pus
 ## 2. Repository Layout
 
 ```
-/                                   ← project root — THE MOBILE APP lives here
-├── app/                            ← Expo Router screens
-│   ├── (auth)/                     ← Login, Register, OTP, Reset Password
-│   ├── (tabs)/                     ← Home, Alerts, Profile, Settings
-│   ├── alert/                      ← Alert detail [id]
-│   └── emergency/                  ← Activate emergency flow
+/                                             ← project root — THE MOBILE APP lives here
+│
+├── app/                                      ← Expo Router screens (file = route)
+│   ├── _layout.tsx                           ← Root layout (fonts, QueryClient, AppContext)
+│   ├── index.tsx                             ← Entry redirect (→ splash or tabs)
+│   ├── +not-found.tsx                        ← 404 screen
+│   ├── incoming-alert.tsx                    ← Incoming emergency alert screen
+│   ├── notifications.tsx                     ← Notifications list screen
+│   ├── settings.tsx                          ← Settings screen
+│   ├── about.tsx                             ← About screen
+│   ├── privacy.tsx                           ← Privacy policy screen
+│   ├── terms.tsx                             ← Terms of service screen
+│   ├── help-support.tsx                      ← Help & support screen
+│   ├── edit-profile.tsx                      ← Edit profile screen
+│   ├── change-password.tsx                   ← Change password screen
+│   ├── delete-account.tsx                    ← Delete account screen
+│   ├── delete-account-verify.tsx             ← Delete account OTP verify screen
+│   ├── (auth)/                               ← Unauthenticated screens
+│   │   ├── _layout.tsx                       ← Auth stack layout
+│   │   ├── splash.tsx                        ← Splash / onboarding screen
+│   │   ├── login.tsx                         ← Login screen
+│   │   ├── register.tsx                      ← Register screen
+│   │   ├── otp.tsx                           ← OTP verification screen
+│   │   ├── verify-otp.tsx                    ← Verify OTP (password reset)
+│   │   ├── forgot-password.tsx               ← Forgot password screen
+│   │   └── new-password.tsx                  ← Set new password screen
+│   ├── (tabs)/                               ← Authenticated tab screens
+│   │   ├── _layout.tsx                       ← Tab bar layout
+│   │   ├── index.tsx                         ← Home tab (active codes + requests)
+│   │   ├── alerts.tsx                        ← Alerts list tab
+│   │   └── profile.tsx                       ← Profile tab
+│   ├── alert/
+│   │   └── [id].tsx                          ← Alert detail screen
+│   └── emergency/
+│       └── new.tsx                           ← Activate emergency bottom sheet
+│
 ├── components/
-│   └── ui/                         ← Primitives: CustomButton, Badge, Avatar, FeedbackDialog, etc.
-├── constants/                      ← Enums, theme tokens, emergency codes
-├── contexts/                       ← AppContext (theme + i18n)
-├── hooks/                          ← Custom React hooks
-├── types/                          ← Shared TypeScript interfaces
-├── utils/                          ← Pure helper functions
-├── assets/                         ← Images, fonts, icons
-├── data/                           ← DATA LAYER (target architecture — create on first use)
-│   ├── mock/                       ← Mock responses (USE_MOCK_DATA=true)
-│   │   ├── auth_mock.ts
-│   │   └── alerts_mock.ts
-│   ├── api_client.ts               ← Axios instance (base URL from env)
-│   ├── auth_repository.ts
-│   ├── alert_repository.ts
-│   ├── fcm_repository.ts
-│   └── notification_repository.ts
-├── app.json                        ← Expo app config
+│   ├── ErrorBoundary.tsx                     ← Top-level error boundary wrapper
+│   ├── ErrorFallback.tsx                     ← Fallback UI for error boundary
+│   ├── KeyboardAwareScrollViewCompat.tsx     ← Cross-platform keyboard scroll helper
+│   └── ui/                                   ← Reusable UI primitives
+│       ├── AlertCard.tsx                     ← Alert list item card
+│       ├── Avatar.tsx                        ← User avatar with initials
+│       ├── Badge.tsx                         ← Status badge (urgent/pending/resolved)
+│       ├── CodeButton.tsx                    ← Emergency code selector button
+│       ├── CustomButton.tsx                  ← Primary button component
+│       ├── EmergencyCodeCard.tsx             ← Active code card on Home screen
+│       ├── FeedbackDialog.tsx                ← Success / error / confirm dialog
+│       ├── LiveDot.tsx                       ← Animated live indicator dot
+│       ├── RequestCard.tsx                   ← Active request card on Home screen
+│       ├── Shimmer.tsx                       ← Shimmer loading animation
+│       └── skeletons/
+│           ├── AlertDetailSkeleton.tsx       ← Alert detail loading skeleton
+│           ├── AlertsScreenSkeleton.tsx      ← Alerts list loading skeleton
+│           ├── HomeScreenSkeleton.tsx        ← Home screen loading skeleton
+│           └── NotificationsSkeleton.tsx     ← Notifications loading skeleton
+│
+├── constants/
+│   ├── codes.ts                              ← Emergency code definitions + getCodeByType()
+│   ├── colors.ts                             ← Raw color palette (use via theme, not directly)
+│   ├── env.ts                                ← ENV object (USE_MOCK_DATA, API_BASE_URL)
+│   ├── mockData.ts                           ← Legacy mock data (do not add new data here)
+│   └── theme.ts                             ← Light/dark theme tokens (ThemeColors type)
+│
+├── contexts/
+│   └── AppContext.tsx                        ← Theme + i18n + language (useApp() hook)
+│
+├── hooks/
+│   ├── useAlerts.ts                          ← useAlerts(), useAlertDetail()
+│   ├── useColors.ts                          ← useColors() shorthand
+│   ├── useHome.ts                            ← useActiveCodes(), useActiveRequests()
+│   └── useNotifications.ts                  ← useNotifications()
+│
+├── types/
+│   ├── alert.ts                              ← Alert, AlertDetail, Responder, ActiveCode
+│   ├── auth.ts                               ← LoginRequest, LoginResponse, User, etc.
+│   └── notification.ts                       ← Notification type
+│
+├── utils/
+│   └── formatTime.ts                         ← formatTime(seconds) → "MM:SS"
+│
+├── data/                                     ← Data layer (repositories + mocks)
+│   ├── api_client.ts                         ← Axios instance (baseURL, auth header, errors)
+│   ├── auth_repository.ts                    ← login(), register(), updateDeviceToken()
+│   ├── alert_repository.ts                   ← fetchAlerts(), fetchAlertById(), respondToAlert()
+│   ├── notification_repository.ts            ← fetchNotifications()
+│   └── mock/
+│       ├── auth_mock.ts                      ← mockLogin(), mockRegister()
+│       ├── alerts_mock.ts                    ← MOCK_ALERTS, mockFetchAlerts(), etc.
+│       └── notifications_mock.ts             ← mockFetchNotifications()
+│
+├── assets/                                   ← Images, fonts, icons
+├── app.json                                  ← Expo app config (bundle ID, version, plugins)
+├── eas.json                                  ← EAS Build profiles (development/preview/testflight/production)
 ├── babel.config.js
 ├── metro.config.js
 ├── tsconfig.json
 ├── package.json
-├── AGENTS.md                       ← This file
-└── API_SPEC.md                     ← Backend API contract (→ see section 23)
+├── AGENTS.md                                 ← This file
+└── API_SPEC.md                               ← Backend API contract (→ see section 23)
 ```
 
 ---

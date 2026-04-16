@@ -12,13 +12,13 @@ export interface Alert {
   type: string
   color: string
   location: string
-  status: 'active' | 'pending' | 'resolved'
+  status: 'active' | 'resolved'
   responders: number
   timestamp: string
-  building: string
-  floor: string
-  department: string
-  room: string
+  building: string | null
+  floor: string | null
+  department: string | null
+  room: string | null
   notes?: string | null
 }
 
@@ -46,11 +46,22 @@ export interface ActiveRequest {
   color: string
 }
 
+// String-based (legacy, still accepted by API)
 export interface ActivateAlertRequest {
   type: string
   building: string
   floor: string
   department: string
   room: string
+  notes?: string
+}
+
+// ID-based (preferred by API)
+export interface ActivateAlertIdRequest {
+  code_type_id: number
+  building_id: number
+  floor_id: number
+  department_id: number
+  room_id: number
   notes?: string
 }

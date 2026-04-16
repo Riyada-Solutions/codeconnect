@@ -7,7 +7,7 @@ import {
   mockFetchActiveCodes,
   mockRespondToAlert,
 } from './mock/alerts_mock'
-import type { Alert, AlertDetail, ActiveRequest, ActiveCode, ActivateAlertRequest } from '@/types/alert'
+import type { Alert, AlertDetail, ActiveRequest, ActiveCode, ActivateAlertRequest, ActivateAlertIdRequest } from '@/types/alert'
 
 export async function fetchAlerts(): Promise<Alert[]> {
   if (ENV.USE_MOCK_DATA) return mockFetchAlerts()
@@ -17,8 +17,8 @@ export async function fetchAlerts(): Promise<Alert[]> {
 
 export async function fetchAlertById(id: string): Promise<AlertDetail> {
   if (ENV.USE_MOCK_DATA) return mockFetchAlertById(id)
-  const { data } = await apiClient.get<AlertDetail>(`/alerts/${id}`)
-  return data
+  const { data } = await apiClient.get<{ data: AlertDetail }>(`/alerts/${id}`)
+  return data.data
 }
 
 export async function fetchActiveRequests(): Promise<ActiveRequest[]> {
@@ -33,18 +33,19 @@ export async function fetchActiveCodes(): Promise<ActiveCode[]> {
   return data.data
 }
 
-export async function activateAlert(body: ActivateAlertRequest): Promise<Alert> {
+export async function activateAlert(body: ActivateAlertRequest | ActivateAlertIdRequest): Promise<Alert> {
   if (ENV.USE_MOCK_DATA) {
+    const b = body as ActivateAlertRequest
     return {
-      id: `mock-${Date.now()}`, title: `${body.type}: ${body.department}`,
-      type: body.type, color: '#2daaae', location: `${body.building}, ${body.floor}`,
-      status: 'active', responders: 0, timestamp: 'just now',
-      building: body.building, floor: body.floor,
-      department: body.department, room: body.room, notes: body.notes ?? null,
+      id: `mock-${Date.now()}`, title: `${b.type}: ${b.department}`,
+      type: b.type, color: '#2daaae', location: `${b.building}, ${b.floor}`,
+      status: 'active', responders: 0, timestamp: new Date().toISOString(),
+      building: b.building, floor: b.floor,
+      department: b.department, room: b.room, notes: b.notes ?? null,
     }
   }
-  const { data } = await apiClient.post<Alert>('/alerts', body)
-  return data
+  const { data } = await apiClient.post<{ data: Alert }>('/alerts', body)
+  return data.data
 }
 
 export async function respondToAlert(id: string): Promise<void> {

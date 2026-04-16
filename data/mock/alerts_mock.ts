@@ -25,7 +25,7 @@ export const MOCK_ALERTS: AlertDetail[] = [
   },
   {
     id: 'a3', title: 'Code Pink: NICU Alert', type: 'Code Pink', color: '#ec4899',
-    location: 'NICU - Room 4', status: 'pending', responders: 2, timestamp: '8m ago',
+    location: 'NICU - Room 4', status: 'active', responders: 2, timestamp: '8m ago',
     building: "Women's Center", floor: 'Floor 3', department: 'NICU', room: 'Room 4', notes: null,
     respondersList: [
       { id: 'r6', name: 'Nurse Hana Yusuf', role: 'NICU Nurse', avatar: 'HY', respondedAt: '6m ago' },
@@ -56,7 +56,7 @@ export const MOCK_ACTIVE_REQUESTS: ActiveRequest[] = [
 export const MOCK_ACTIVE_CODES: ActiveCode[] = [
   { id: '1', type: 'Code Blue', color: '#3b82f6', location: 'ICU / Dept A / Room 6', responders: 3, status: 'active', timestamp: '2m ago' },
   { id: '2', type: 'Code Red', color: '#ef4444', location: 'ER / Dept B / Room 10', responders: 5, status: 'active', timestamp: '5m ago' },
-  { id: '3', type: 'Code Pink', color: '#ec4899', location: 'NICU / Dept C / Room 4', responders: 2, status: 'pending', timestamp: '8m ago' },
+  { id: '3', type: 'Code Pink', color: '#ec4899', location: 'NICU / Dept C / Room 4', responders: 2, status: 'active', timestamp: '8m ago' },
   { id: '4', type: 'Code Yellow', color: '#f59e0b', location: 'OR / Dept D / Room 2', responders: 4, status: 'active', timestamp: '12m ago' },
 ]
 
