@@ -1,0 +1,25 @@
+---
+description: CodeConnect monorepo — follow AGENTS.md (TypeScript, Expo, service layer)
+alwaysApply: true
+---
+
+# CodeConnect — project standards
+
+**Canonical source:** **`AGENTS.md`** at the repository root. If anything disagrees, **`AGENTS.md` wins**.
+
+## Quick reference (aligned with current code)
+
+- **Language:** **TypeScript** (`.ts`/`.tsx`) in `artifacts/codeconnect`, `artifacts/api-server`, `lib/*`. Strict; run **`pnpm run typecheck`** in the touched package.
+- **App:** Expo ~54, React Native, **Expo Router** — `artifacts/codeconnect/app/**/*.tsx`, **`expo-router`** (not React Router).
+- **Styles:** `StyleSheet.create()` + `constants/theme` + `AppContext` — not Tailwind for this mobile app.
+- **API calls:** **`@workspace/api-client-react`** + thin hooks — not raw `fetch` in screens; not Axios unless adopted.
+- **Monorepo:** `pnpm`; API `artifacts/api-server`; shared `lib/*`.
+- **Naming:** PascalCase components, kebab-case route files, camelCase vars/hooks; no snake_case files.
+- **UX:** Visible loading/error states; clear validation; toasts when available; `Alert.alert` OK for destructive confirms.
+- **Copy:** Extend `AppContext` i18n for new strings.
+- **Secrets:** `EXPO_PUBLIC_*` / project config — never hardcode secrets.
+- **Docs:** No proactive API markdown / catalogs unless maintainer **explicitly** asks; code + `lib/api-zod` / types are truth.
+
+## Do not default to
+
+JavaScript-only new code, Tailwind-primary mobile, Vite `VITE_*` in Expo app, React Router for this app, or **proactive API docs**.
