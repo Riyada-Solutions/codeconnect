@@ -54,7 +54,8 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "./plugins/with-modular-headers.js"
     ],
     "experiments": {
       "typedRoutes": true
