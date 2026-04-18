@@ -27,14 +27,16 @@ import { useCurrentUser } from "@/hooks/useHome";
 function buildSpeechText(
   language: string,
   code: string,
-  building: string,
-  floor: string,
-  room: string,
-  userName: string,
+  department?: string,
+  building?: string,
+  floor?: string,
+  room?: string,
+  userName?: string,
 ): string {
   if (language === "ar") {
     return [
       `${code}. ${code}. `,
+      department ? `${department} القسم.` : "",
       building ? `${building} المبنى.` : "",
       floor ? `${floor} الطابق.` : "",
       room ? `${room} الغرفة.` : "",
@@ -45,9 +47,10 @@ function buildSpeechText(
 
   return [
     `${code}. ${code}. --`,
-    building ? `building is ${building} . --` : "",
-    floor ? `floor is ${floor}. --` : "",
-    room ? `room is ${room}. --` : "",
+    building ? `building -- ${building} . --` : "",
+    department ? `department -- ${department} . --` : "",
+    floor ? `floor -- ${floor}. --` : "",
+    room ? `room -- ${room}. --` : "",
     "Please respond immediately.",
     // userName ? `${userName}, please respond.` : "",
   ].filter(Boolean).join(" ");
@@ -56,10 +59,11 @@ function buildSpeechText(
 export default function IncomingAlertScreen() {
   const params = useLocalSearchParams<{
     code: string; 
-    floor: string;
-    room: string;
-    department: string;
-    notes: string;
+    floor?: string;
+    room?: string;
+    department?: string;
+    building?: string;
+    notes?: string;
   }>();
   const insets = useSafeAreaInsets();
   const { t, isDark, language } = useApp();
@@ -103,6 +107,7 @@ export default function IncomingAlertScreen() {
     const speechText = buildSpeechText(
       language,
       params.code ?? "",
+      params.department ?? "",
       params.building ?? "",
       params.floor ?? "",
       params.room ?? "",
