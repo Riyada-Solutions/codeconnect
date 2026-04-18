@@ -58,6 +58,7 @@ export default function NewEmergencyScreen() {
     }
   }, [codeParam, activeCode]);
 
+
   // Selected IDs
   const [buildingId, setBuildingId] = useState<number | null>(null);
   const [floorId, setFloorId] = useState<number | null>(null);

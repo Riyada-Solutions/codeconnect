@@ -16,10 +16,10 @@ import Avatar from "@/components/ui/Avatar";
 import EmergencyCodeCard from "@/components/ui/EmergencyCodeCard";
 import RequestCard from "@/components/ui/RequestCard";
 import HomeScreenSkeleton from "@/components/ui/skeletons/HomeScreenSkeleton";
-import { CODES } from "@/constants/codes";
+import { getCodeByType } from "@/constants/codes";
 import { useApp } from "@/contexts/AppContext";
-import { useActiveRequests, useCurrentUser } from "@/hooks/useHome";
-import { getGreeting } from "@/utils/formatTime";
+import { useHomeData, useCurrentUser } from "@/hooks/useHome";
+import { getGreeting, timeAgo } from "@/utils/formatTime";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -27,7 +27,11 @@ export default function HomeScreen() {
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
   const { data: user, isLoading: userLoading, refetch: refetchUser } = useCurrentUser();
-  const { data: activeRequests, isLoading: reqLoading, isError: reqError, refetch: refetchReq } = useActiveRequests();
+  const { data: homeData, isLoading: reqLoading, isError: reqError, refetch: refetchReq } = useHomeData();
+
+  const activeRequests = homeData?.activeRequests;
+  const codeTypes = homeData?.codeTypes ?? [];
+  const unreadCount = homeData?.unreadNotificationCount ?? 0;
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -57,7 +61,11 @@ export default function HomeScreen() {
           <View style={styles.heroRight}>
             <Pressable style={styles.iconBtn} onPress={() => router.push("/notifications")}>
               <Feather name="bell" size={18} color={colors.heroText} />
-              <View style={[styles.notifDot, { borderColor: colors.hero, backgroundColor: colors.danger }]} />
+              {unreadCount > 0 && (
+                <View style={[styles.notifBadge, { borderColor: colors.hero, backgroundColor: colors.danger }]}>
+                  <Text style={styles.notifBadgeText}>{unreadCount > 99 ? "99+" : unreadCount}</Text>
+                </View>
+              )}
             </Pressable>
           </View>
         </View>
@@ -83,16 +91,19 @@ export default function HomeScreen() {
           <Text style={[styles.sectionTitle2, { color: colors.text }]}>{t("home.emergencyCodes")}</Text>
           <Text style={[styles.sectionSubtitle, { color: colors.textMuted }]}>{t("home.quickAccess")}</Text>
           <View style={styles.codeList}>
-            {CODES.map((code) => (
-              <EmergencyCodeCard
-                key={code.id}
-                type={code.type}
-                description={code.description}
-                color={code.color}
-                icon={code.icon}
-                onPress={() => router.push(`/emergency/new?code=${encodeURIComponent(code.type)}`)}
-              />
-            ))}
+            {codeTypes.map((code) => {
+              const local = getCodeByType(code.name);
+              return (
+                <EmergencyCodeCard
+                  key={code.id}
+                  type={code.name}
+                  description={code.description}
+                  color={code.color}
+                  icon={local?.icon ?? "alert-circle"}
+                  onPress={() => router.push(`/emergency/new?code=${encodeURIComponent(code.name)}`)}
+                />
+              );
+            })}
           </View>
         </View>
 
@@ -121,7 +132,7 @@ export default function HomeScreen() {
                   key={req.id}
                   title={req.title}
                   location={req.location}
-                  time={req.updatedAt}
+                  time={timeAgo(req.updatedAt)}
                   type={req.type}
                   color={req.color}
                   onPress={() => router.push(`/alert/${req.id}`)}
@@ -196,14 +207,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  notifDot: {
+  notifBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: 4,
+    right: 4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
     borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 3,
+  },
+  notifBadgeText: {
+    fontSize: 9,
+    fontFamily: "Inter_700Bold",
+    color: "#ffffff",
+    lineHeight: 12,
   },
   scroll: {
     flex: 1,

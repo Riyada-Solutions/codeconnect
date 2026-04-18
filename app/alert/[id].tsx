@@ -17,7 +17,7 @@ import CustomButton from "@/components/ui/CustomButton";
 import AlertDetailSkeleton from "@/components/ui/skeletons/AlertDetailSkeleton";
 import { useApp } from "@/contexts/AppContext";
 import { useAlertDetail } from "@/hooks/useAlerts";
-import { formatTime } from "@/utils/formatTime";
+import { formatTime, timeAgo } from "@/utils/formatTime";
 
 export default function AlertDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -115,7 +115,7 @@ export default function AlertDetailScreen() {
                     <Text style={[styles.responderName, { color: colors.text }]}>{r.name}</Text>
                     <Text style={[styles.responderRole, { color: colors.textMuted }]}>{r.role}</Text>
                   </View>
-                  <Text style={[styles.responderTime, { color: colors.textMuted }]}>{r.respondedAt}</Text>
+                  <Text style={[styles.responderTime, { color: colors.textMuted }]}>{timeAgo(r.respondedAt)}</Text>
                 </View>
               ))
             )}

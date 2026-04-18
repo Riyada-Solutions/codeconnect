@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
   (error) => {
     log(
       TAG,
-      `ERROR[${error.response?.status ?? 'ERR'}] \nURL: ${error.config?.baseURL}${error.config?.url} \nRequest Data[${JSON.stringify(error.response?.data ?? {})}]`,
+      `ERROR\nURL: ${error.config?.method?.toUpperCase()} ${error.config?.baseURL}${error.config?.url}\nHTTP Status: ${error.response?.status ?? 'NO_RESPONSE'}\nAxios Code: ${error.code ?? 'NONE'}\nMessage: ${error.message}\nServer Body: ${JSON.stringify(error.response?.data ?? {})}`,
     )
     const message =
       error.response?.data?.message ?? error.message ?? 'Unknown error'

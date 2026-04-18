@@ -5,9 +5,12 @@ import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 
 import { useApp } from "@/contexts/AppContext";
+import { useHomeData } from "@/hooks/useHome";
 
 export default function TabLayout() {
   const { isDark, colors, t } = useApp();
+  const { data: homeData } = useHomeData();
+  const unreadCount = homeData?.unreadNotificationCount ?? 0;
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
@@ -55,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: t("tabs.alerts"),
           tabBarIcon: ({ color }) => <Feather name="bell" size={20} color={color} />,
-          tabBarBadge: 3,
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
           tabBarBadgeStyle: { backgroundColor: "#ef4444", fontSize: 10 },
         }}
       />

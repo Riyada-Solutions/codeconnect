@@ -3,6 +3,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useApp } from "@/contexts/AppContext";
+import { timeAgo } from "@/utils/formatTime";
 import Badge from "./Badge";
 
 interface AlertCardProps {
@@ -41,7 +42,7 @@ export default function AlertCard({
         </View>
         <View style={styles.footer}>
           <Badge label={status} variant={statusVariant} />
-          <Text style={[styles.timestamp, { color: colors.textMuted }]}>{timestamp}</Text>
+          <Text style={[styles.timestamp, { color: colors.textMuted }]}>{timeAgo(timestamp)}</Text>
         </View>
       </View>
       <View style={styles.right}>

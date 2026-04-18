@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
+  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -13,9 +15,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Avatar from "@/components/ui/Avatar";
 import CustomButton from "@/components/ui/CustomButton";
-import { mockUser } from "@/constants/mockData";
-import { useApp } from "@/contexts/AppContext";
 import type { ThemeColors } from "@/constants/theme";
+import { useApp } from "@/contexts/AppContext";
+import { logout } from "@/data/auth_repository";
+import { useCurrentUser } from "@/hooks/useHome";
 
 interface MenuRowProps {
   icon: string;
@@ -44,9 +47,37 @@ function MenuRow({ icon, iconColor, iconBg, label, onPress, colors }: MenuRowPro
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t, colors } = useApp();
+  const queryClient = useQueryClient();
+  const { data: user } = useCurrentUser();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const initials = user?.initials
+    ?? user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+    ?? "?";
 
   const handleLogout = () => {
-    router.replace("/(auth)/login");
+    Alert.alert(
+      t("profile.logout"),
+      "Are you sure you want to log out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Log out",
+          style: "destructive",
+          onPress: async () => {
+            setLoggingOut(true);
+            try {
+              await logout();
+              queryClient.clear();
+            } finally {
+              setLoggingOut(false);
+              router.replace("/(auth)/login");
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -56,18 +87,20 @@ export default function ProfileScreen() {
         <View style={styles.decorCircle2} />
         <View style={styles.heroCenter}>
           <Avatar
-            initials={mockUser.initials}
+            initials={initials}
             size={72}
             backgroundColor="rgba(255,255,255,0.2)"
             textColor="#ffffff"
             borderColor="rgba(255,255,255,0.3)"
             borderWidth={3}
           />
-          <Text style={styles.heroName}>{mockUser.name}</Text>
-          <Text style={styles.heroRole}>{mockUser.role}</Text>
-          <View style={styles.hospitalBadge}>
-            <Text style={styles.hospitalText}>{mockUser.hospital}</Text>
-          </View>
+          <Text style={styles.heroName}>{user?.name ?? "..."}</Text>
+          <Text style={styles.heroRole}>{user?.role ?? ""}</Text>
+          {user?.hospital ? (
+            <View style={styles.hospitalBadge}>
+              <Text style={styles.hospitalText}>{user.hospital}</Text>
+            </View>
+          ) : null}
         </View>
       </View>
 
@@ -157,10 +190,10 @@ export default function ProfileScreen() {
           />
         </View>
 
-        <CustomButton onPress={handleLogout} color={colors.card} borderColor="#fecaca" height={50} radius={14}>
+        <CustomButton onPress={handleLogout} color={colors.card} borderColor="#fecaca" height={50} radius={14} enabled={!loggingOut}>
           <View style={styles.logoutInner}>
             <Feather name="log-out" size={18} color="#ef4444" />
-            <Text style={styles.logoutText}>{t("profile.logout")}</Text>
+            <Text style={styles.logoutText}>{loggingOut ? "Logging out..." : t("profile.logout")}</Text>
           </View>
         </CustomButton>
       </ScrollView>

@@ -1,18 +1,20 @@
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { Audio } from "expo-av";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import * as Speech from "expo-speech";
+import React, { useEffect, useRef, useState } from "react";
+import { Platform, ScrollView, StyleSheet, Text, Vibration, View } from "react-native";
 import Animated, {
+  Easing,
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
-  withDelay,
-  Easing,
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,6 +22,31 @@ import CustomButton from "@/components/ui/CustomButton";
 import { CODES, getCodeByType } from "@/constants/codes";
 import { useApp } from "@/contexts/AppContext";
 import { formatTime } from "@/utils/formatTime";
+import { useCurrentUser } from "@/hooks/useHome";
+
+function buildSpeechText(
+  language: string,
+  code: string,
+  room: string,
+  userName: string,
+): string {
+  if (language === "ar") {
+    // "كود ريد كود ريد كود ريد. يرجى التوجه فوراً إلى الغرفة [room]. يرجى الاستجابة فوراً. [name] يرجى الاستجابة."
+    return [
+      `${code}. ${code}. ${code}.`,
+      room ? `يرجى التوجه فوراً إلى ${room}.` : "",
+      "يرجى الاستجابة فوراً.",
+      userName ? `${userName}، يرجى الاستجابة.` : "",
+    ].filter(Boolean).join(" ");
+  }
+
+  return [
+    `${code}. ${code}. ${code}.`,
+    room ? `Please respond to ${room} immediately.` : "",
+    "Please respond immediately.",
+    userName ? `${userName}, please respond.` : "",
+  ].filter(Boolean).join(" ");
+}
 
 export default function IncomingAlertScreen() {
   const params = useLocalSearchParams<{
@@ -31,7 +58,8 @@ export default function IncomingAlertScreen() {
     notes: string;
   }>();
   const insets = useSafeAreaInsets();
-  const { colors, t, isDark } = useApp();
+  const { t, isDark, language } = useApp();
+  const { data: user } = useCurrentUser();
   const [elapsed, setElapsed] = useState(0);
 
   const codeData = getCodeByType(params.code || "Code Red") || CODES[1];
@@ -40,11 +68,103 @@ export default function IncomingAlertScreen() {
   const pulseScale = useSharedValue(1);
   const pulseOpacity = useSharedValue(0.3);
 
+  const sirenRef = useRef<Audio.Sound | null>(null);
+
+  // ── Tune these two values to control timing ──────────────────
+  const SIREN_DURATION_MS = 3000; // how long siren plays before voice starts
+  // ─────────────────────────────────────────────────────────────
+
+  // Alarm + TTS on mount
+  useEffect(() => {
+    let cancelled = false;
+
+    // Repeating urgent vibration
+    const PATTERN = [0, 500, 300, 500, 300, 700];
+    Vibration.vibrate(PATTERN, true);
+
+    // Strong haptic
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+
+    // 1️⃣ Play siren first
+    Audio.setAudioModeAsync({ playsInSilentModeIOS: true }).then(() =>
+      Audio.Sound.createAsync(
+        require("@/assets/sounds/siren.wav"),
+        { shouldPlay: true, isLooping: false, volume: 1.0 }
+      )
+    ).then(({ sound }) => {
+      if (cancelled) { sound.unloadAsync(); return; }
+      sirenRef.current = sound;
+    }).catch(() => {});
+
+    const speechText = buildSpeechText(
+      language,
+      params.code ?? "",
+      params.room ?? "",
+      user?.name ?? "",
+    );
+
+    const lang = language === "ar" ? "ar-SA" : "en-US";
+    let repeatCount = 0;
+
+    const speak = (voiceId?: string) => {
+      if (cancelled) return;
+      Speech.speak(speechText, {
+        language: lang,
+        voice: voiceId,
+        pitch: voiceId ? 1.0 : 0.7,
+        rate: 1.1,
+        onDone: () => {
+          repeatCount += 1;
+          if (repeatCount < 3 && !cancelled) {
+            setTimeout(() => speak(voiceId), 1000);
+          }
+        },
+      });
+    };
+
+    // 2️⃣ After siren finishes → start TTS voice
+    const speechTimer = setTimeout(async () => {
+      if (cancelled) return;
+      // Stop siren when voice starts
+      sirenRef.current?.stopAsync().catch(() => {});
+      try {
+        const voices = await Speech.getAvailableVoicesAsync();
+        const maleVoice = voices.find(
+          (v) =>
+            v.language.startsWith(language === "ar" ? "ar" : "en") &&
+            (v.identifier.toLowerCase().includes("male") ||
+              v.name.toLowerCase().includes("male") ||
+              ["aaron", "alex", "fred", "daniel", "oliver", "rishi", "thomas"].some((n) =>
+                v.name.toLowerCase().includes(n)
+              ) ||
+              v.identifier.toLowerCase().includes("male_1"))
+        );
+        speak(maleVoice?.identifier);
+      } catch {
+        speak();
+      }
+    }, SIREN_DURATION_MS);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(speechTimer);
+      Vibration.cancel();
+      Speech.stop();
+      sirenRef.current?.stopAsync().then(() => sirenRef.current?.unloadAsync()).catch(() => {});
+      sirenRef.current = null;
+    };
+  }, []);
+
+  // Elapsed timer
   useEffect(() => {
     const interval = setInterval(() => {
       setElapsed((prev) => prev + 1);
     }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
+  // Pulse animation
+  useEffect(() => {
     pulseScale.value = withRepeat(
       withSequence(
         withTiming(1.15, { duration: 800, easing: Easing.inOut(Easing.ease) }),
@@ -61,8 +181,6 @@ export default function IncomingAlertScreen() {
       -1,
       true
     );
-
-    return () => clearInterval(interval);
   }, []);
 
   const pulseStyle = useAnimatedStyle(() => ({
@@ -70,11 +188,20 @@ export default function IncomingAlertScreen() {
     opacity: pulseOpacity.value,
   }));
 
+  const stopAlarm = () => {
+    Vibration.cancel();
+    Speech.stop();
+    sirenRef.current?.stopAsync().then(() => sirenRef.current?.unloadAsync()).catch(() => {});
+    sirenRef.current = null;
+  };
+
   const handleAccept = () => {
+    stopAlarm();
     router.replace("/(tabs)");
   };
 
   const handleReject = () => {
+    stopAlarm();
     router.replace("/(tabs)");
   };
 
@@ -84,7 +211,6 @@ export default function IncomingAlertScreen() {
   const textSecondary = isDark ? "#93b5b6" : "#9ca3af";
 
   const topPad = Platform.OS === "web" ? 67 : insets.top;
-  /** Space for pinned action bar (padding + buttons + safe area). */
   const actionsBarInset = 12 + 52 + Math.max(insets.bottom, 16) + 8;
 
   return (
@@ -181,7 +307,6 @@ export default function IncomingAlertScreen() {
         </Animated.View>
       </ScrollView>
 
-      {/* Pinned: flex siblings + ScrollView often collapse this to 0 on web; absolute keeps it visible. */}
       <View
         style={[
           styles.actionsBar,
@@ -231,26 +356,16 @@ export default function IncomingAlertScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-    minHeight: 0,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
+  root: { flex: 1 },
+  scroll: { flex: 1, minHeight: 0 },
+  scrollContent: { flexGrow: 1 },
   heroBanner: {
     marginHorizontal: 16,
     borderRadius: 20,
     overflow: "hidden",
     paddingVertical: 32,
   },
-  heroContent: {
-    alignItems: "center",
-    gap: 10,
-  },
+  heroContent: { alignItems: "center", gap: 10 },
   iconContainer: {
     width: 72,
     height: 72,
@@ -284,25 +399,10 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.8)",
   },
-  timerSection: {
-    alignItems: "center",
-    paddingVertical: 20,
-    gap: 4,
-  },
-  timerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  timerText: {
-    fontSize: 36,
-    fontFamily: "Inter_700Bold",
-    letterSpacing: 4,
-  },
-  timerLabel: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  timerSection: { alignItems: "center", paddingVertical: 20, gap: 4 },
+  timerRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  timerText: { fontSize: 36, fontFamily: "Inter_700Bold", letterSpacing: 4 },
+  timerLabel: { fontSize: 12, fontFamily: "Inter_400Regular" },
   locationCard: {
     marginHorizontal: 16,
     borderRadius: 16,
@@ -315,11 +415,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: "uppercase",
   },
-  locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
+  locationRow: { flexDirection: "row", alignItems: "center", gap: 14 },
   locationIcon: {
     width: 40,
     height: 40,
@@ -327,18 +423,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  locationLabel: {
-    fontSize: 11,
-    fontFamily: "Inter_400Regular",
-  },
-  locationValue: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    marginTop: 1,
-  },
-  notesValueWrap: {
-    flex: 1,
-  },
+  locationLabel: { fontSize: 11, fontFamily: "Inter_400Regular" },
+  locationValue: { fontSize: 15, fontFamily: "Inter_600SemiBold", marginTop: 1 },
+  notesValueWrap: { flex: 1 },
   actionsBar: {
     position: "absolute",
     left: 0,
@@ -349,35 +436,17 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "rgba(255,255,255,0.12)",
   },
-  actionRow: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "stretch",
-  },
-  actionBtnFlex: {
-    flex: 1,
-    minWidth: 0,
-  },
-  actionBtnWide: {
-    alignSelf: "stretch",
-    width: "100%",
-  },
+  actionRow: { flexDirection: "row", gap: 12, alignItems: "stretch" },
+  actionBtnFlex: { flex: 1, minWidth: 0 },
+  actionBtnWide: { alignSelf: "stretch", width: "100%" },
   actionBtnInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
   },
-  rejectText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    color: "#9ca3af",
-  },
-  acceptText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-    color: "#ffffff",
-  },
+  rejectText: { fontSize: 15, fontFamily: "Inter_600SemiBold", color: "#9ca3af" },
+  acceptText: { fontSize: 15, fontFamily: "Inter_600SemiBold", color: "#ffffff" },
   footerSection: {
     alignItems: "center",
     marginTop: 20,
@@ -385,17 +454,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 4,
   },
-  footerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  footerTitle: {
-    fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
-  },
-  footerSubtext: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  footerRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  footerTitle: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+  footerSubtext: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });

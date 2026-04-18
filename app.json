@@ -27,7 +27,8 @@
         "foregroundImage": "./assets/images/ic_launcher.png",
         "backgroundColor": "#2daaae"
       },
-      "softwareKeyboardLayoutMode": "resize"
+      "softwareKeyboardLayoutMode": "resize",
+      "usesCleartextTraffic": false
     },
     "web": {
       "favicon": "./assets/images/icon.png"

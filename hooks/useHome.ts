@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchActiveRequests, fetchActiveCodes } from '@/data/alert_repository'
+import { fetchActiveRequests, fetchActiveCodes, fetchHomeData } from '@/data/alert_repository'
 import { getMe } from '@/data/auth_repository'
+
+export function useHomeData() {
+  return useQuery({
+    queryKey: ['home'],
+    queryFn: fetchHomeData,
+    staleTime: 30_000,
+  })
+}
 
 export function useActiveRequests() {
   return useQuery({

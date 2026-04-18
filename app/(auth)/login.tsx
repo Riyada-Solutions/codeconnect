@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomButton from "@/components/ui/CustomButton";
 import { login } from "@/data/auth_repository";
 import { useApp } from "@/contexts/AppContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 /** Reference UI: teal hero fading to deep teal (light) / darker slate (dark). */
 const LOGIN_GRADIENT_LIGHT: [string, string] = ["#0d9488", "#042f2e"];
@@ -34,6 +35,7 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
   const insets = useSafeAreaInsets();
   const { colors, t, biometricLoginEnabled, isDark } = useApp();
+  const queryClient = useQueryClient();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
   const gradientColors = isDark ? LOGIN_GRADIENT_DARK : LOGIN_GRADIENT_LIGHT;
@@ -73,7 +75,11 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      await login({ username: username.trim(), password });
+      const response = await login({ username: username.trim(), password });
+      // Seed the user cache so screens have data immediately
+      if (response.user) {
+        queryClient.setQueryData(["me"], response.user);
+      }
       router.replace("/(tabs)");
     } catch (err) {
       const message = err instanceof Error ? err.message : t("login.loginFailed");

@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -9,7 +11,11 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 
+import { getMe } from "@/data/auth_repository";
+
 export default function SplashScreen() {
+  const queryClient = useQueryClient();
+
   const logoOpacity = useSharedValue(0);
   const logoScale = useSharedValue(0.8);
   const textOpacity = useSharedValue(0);
@@ -17,16 +23,43 @@ export default function SplashScreen() {
   const badgeTranslateY = useSharedValue(20);
 
   useEffect(() => {
+    // Start animations
     logoOpacity.value = withTiming(1, { duration: 600, easing: Easing.out(Easing.ease) });
     logoScale.value = withTiming(1, { duration: 600, easing: Easing.out(Easing.back(1.2)) });
     textOpacity.value = withDelay(300, withTiming(1, { duration: 500 }));
     badgeOpacity.value = withDelay(600, withTiming(1, { duration: 500 }));
     badgeTranslateY.value = withDelay(600, withTiming(0, { duration: 500, easing: Easing.out(Easing.ease) }));
 
-    const timer = setTimeout(() => {
-      router.replace("/(auth)/login");
-    }, 2500);
-    return () => clearTimeout(timer);
+    // Auth check + minimum display time run in parallel
+    const checkAuth = async (): Promise<"home" | "login"> => {
+      const token = await AsyncStorage.getItem("access_token");
+      if (!token) return "login";
+
+      try {
+        // Token exists — verify it is still valid by calling /me
+        const user = await getMe();
+        // Seed React Query cache so screens don't refetch immediately
+        queryClient.setQueryData(["me"], user);
+        return "home";
+      } catch (error: any) {
+        // Only clear token on auth errors (401 / 403 / 404 = token invalid or expired)
+        const status = error?.response?.status;
+        if (status === 401 || status === 403 || status === 404) {
+          await AsyncStorage.removeItem("access_token");
+          queryClient.clear();
+          return "login";
+        }
+        // Network / SSL error — keep token and go home optimistically
+        return "home";
+      }
+    };
+
+    Promise.all([
+      checkAuth(),
+      new Promise<void>((resolve) => setTimeout(resolve, 1800)), // minimum splash time
+    ]).then(([destination]) => {
+      router.replace(destination === "home" ? "/(tabs)" : "/(auth)/login");
+    });
   }, []);
 
   const logoStyle = useAnimatedStyle(() => ({
