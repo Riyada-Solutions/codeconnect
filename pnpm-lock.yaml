@@ -125,14 +125,13 @@ importers:
       axios:
         specifier: ^1.15.0
         version: 1.15.0
-<<<<<<< HEAD
       expo-av:
         specifier: ^16.0.8
         version: 16.0.8(expo@54.0.33)(react-native-web@0.21.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      expo-speech:
-=======
       expo-build-properties:
->>>>>>> 4e671e7ac46675284c62cf758f3bbd7b56dfedb8
+        specifier: ^55.0.13
+        version: 55.0.13(expo@54.0.33)
+      expo-speech:
         specifier: ^55.0.13
         version: 55.0.13(expo@54.0.33)
     devDependencies:
@@ -4642,11 +4641,6 @@ packages:
     resolution: {integrity: sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==}
     engines: {node: '>= 6'}
 
-  yaml@2.8.2:
-    resolution: {integrity: sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A==}
-    engines: {node: '>= 14.6'}
-    hasBin: true
-
   yaml@2.8.3:
     resolution: {integrity: sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==}
     engines: {node: '>= 14.6'}
@@ -6627,7 +6621,7 @@ snapshots:
     dependencies:
       '@scalar/helpers': 0.4.3
       pathe: 2.0.3
-      yaml: 2.8.2
+      yaml: 2.8.3
 
   '@scalar/openapi-parser@0.25.8':
     dependencies:
@@ -6640,7 +6634,7 @@ snapshots:
       ajv-formats: 3.0.1
       jsonpointer: 5.0.1
       leven: 4.1.0
-      yaml: 2.8.2
+      yaml: 2.8.3
 
   '@scalar/openapi-types@0.6.1':
     dependencies:
@@ -8339,7 +8333,7 @@ snapshots:
       metro-cache: 0.83.3
       metro-core: 0.83.3
       metro-runtime: 0.83.3
-      yaml: 2.8.2
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8354,7 +8348,7 @@ snapshots:
       metro-cache: 0.83.5
       metro-core: 0.83.5
       metro-runtime: 0.83.5
-      yaml: 2.8.2
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -9716,8 +9710,6 @@ snapshots:
   yallist@5.0.0: {}
 
   yaml@1.10.3: {}
-
-  yaml@2.8.2: {}
 
   yaml@2.8.3: {}
 
