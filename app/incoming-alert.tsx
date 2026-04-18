@@ -27,35 +27,43 @@ import { useCurrentUser } from "@/hooks/useHome";
 function buildSpeechText(
   language: string,
   code: string,
-  room: string,
-  userName: string,
+  department?: string,
+  building?: string,
+  floor?: string,
+  room?: string,
+  userName?: string,
 ): string {
   if (language === "ar") {
-    // "كود ريد كود ريد كود ريد. يرجى التوجه فوراً إلى الغرفة [room]. يرجى الاستجابة فوراً. [name] يرجى الاستجابة."
     return [
-      `${code}. ${code}. ${code}.`,
-      room ? `يرجى التوجه فوراً إلى ${room}.` : "",
+      `${code}. ${code}. `,
+      department ? `${department} القسم.` : "",
+      building ? `${building} المبنى.` : "",
+      floor ? `${floor} الطابق.` : "",
+      room ? `${room} الغرفة.` : "",
       "يرجى الاستجابة فوراً.",
-      userName ? `${userName}، يرجى الاستجابة.` : "",
+      // userName ? `${userName}، يرجى الاستجابة.` : "",
     ].filter(Boolean).join(" ");
   }
 
   return [
-    `${code}. ${code}. ${code}.`,
-    room ? `Please respond to ${room} immediately.` : "",
+    `${code}. ${code}. --`,
+    building ? `building -- ${building} . --` : "",
+    department ? `department -- ${department} . --` : "",
+    floor ? `floor -- ${floor}. --` : "",
+    room ? `room -- ${room}. --` : "",
     "Please respond immediately.",
-    userName ? `${userName}, please respond.` : "",
+    // userName ? `${userName}, please respond.` : "",
   ].filter(Boolean).join(" ");
-}
+} 
 
 export default function IncomingAlertScreen() {
   const params = useLocalSearchParams<{
-    code: string;
-    building: string;
-    floor: string;
-    room: string;
-    department: string;
-    notes: string;
+    code: string; 
+    floor?: string;
+    room?: string;
+    department?: string;
+    building?: string;
+    notes?: string;
   }>();
   const insets = useSafeAreaInsets();
   const { t, isDark, language } = useApp();
@@ -99,6 +107,9 @@ export default function IncomingAlertScreen() {
     const speechText = buildSpeechText(
       language,
       params.code ?? "",
+      params.department ?? "",
+      params.building ?? "",
+      params.floor ?? "",
       params.room ?? "",
       user?.name ?? "",
     );
@@ -112,7 +123,7 @@ export default function IncomingAlertScreen() {
         language: lang,
         voice: voiceId,
         pitch: voiceId ? 1.0 : 0.7,
-        rate: 1.1,
+        rate: 1.05,
         onDone: () => {
           repeatCount += 1;
           if (repeatCount < 3 && !cancelled) {
