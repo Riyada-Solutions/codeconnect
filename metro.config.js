@@ -4,6 +4,17 @@ const { getDefaultConfig } = require("expo/metro-config");
 const projectRoot = __dirname;
 const config = getDefaultConfig(projectRoot);
 
+config.watchFolders = [projectRoot];
+config.resolver.blockList = [
+  /\.local\/.*/,
+  /\.git\/.*/,
+  /artifacts\/.*\/node_modules\/.*/,
+];
+config.watcher = config.watcher || {};
+config.watcher.additionalExts = config.watcher.additionalExts || [];
+config.watcher.healthCheck = { enabled: true };
+config.watcher.unstable_autoSaveCache = { enabled: false };
+
 const shimPath = path.join(projectRoot, "shims", "expo-local-authentication.js");
 
 function realExpoLocalAuthInstalled() {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "488366729005",
+    "project_id": "codeconnect-riyada",
+    "storage_bucket": "codeconnect-riyada.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488366729005:android:a346f086a44793de1a15a4",
+        "android_client_info": {
+          "package_name": "com.codeconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNSVa-VqORdP9ToD9aH1K0XK3EGCLY7Is"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

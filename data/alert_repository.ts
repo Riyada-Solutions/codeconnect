@@ -24,8 +24,8 @@ export async function fetchAlertById(id: string): Promise<AlertDetail> {
 
 export async function fetchHomeData(): Promise<HomeData> {
   if (ENV.USE_MOCK_DATA) return mockFetchHomeData()
-  const { data } = await apiClient.get<{ data: HomeData }>('/home')
-  return data.data
+  const res = await apiClient.get('/home')
+  return res.data?.data ?? res.data ?? { activeRequests: [], codeTypes: [], unreadNotificationCount: 0 }
 }
 
 export async function fetchActiveRequests(): Promise<ActiveRequest[]> {

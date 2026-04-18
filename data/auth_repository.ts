@@ -21,8 +21,8 @@ export async function login(body: LoginRequest): Promise<LoginResponse> {
 
 export async function getMe(): Promise<User> {
   if (ENV.USE_MOCK_DATA) return mockGetMe()
-  const { data } = await apiClient.get<{ data: User }>('/me')
-  return data.data
+  const res = await apiClient.get('/me')
+  return res.data?.data ?? res.data
 }
 
 export async function register(body: RegisterRequest): Promise<void> {
@@ -66,6 +66,12 @@ export async function logout(): Promise<void> {
 export async function deleteAccount(password: string): Promise<void> {
   if (ENV.USE_MOCK_DATA) return
   await apiClient.post('/auth/delete-account', { password, confirmation: 'DELETE' })
+}
+
+export async function updateMe(body: { name: string; phone: string }): Promise<User> {
+  if (ENV.USE_MOCK_DATA) return mockGetMe()
+  const res = await apiClient.patch('/me', body)
+  return res.data?.data ?? res.data
 }
 
 export async function updateDeviceToken(userId: string, token: string): Promise<void> {
