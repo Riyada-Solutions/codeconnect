@@ -125,14 +125,13 @@ importers:
       axios:
         specifier: ^1.15.0
         version: 1.15.0
-<<<<<<< HEAD
       expo-av:
         specifier: ^16.0.8
         version: 16.0.8(expo@54.0.33)(react-native-web@0.21.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      expo-speech:
-=======
       expo-build-properties:
->>>>>>> 4e671e7ac46675284c62cf758f3bbd7b56dfedb8
+        specifier: ^55.0.13
+        version: 55.0.13(expo@54.0.33)
+      expo-speech:
         specifier: ^55.0.13
         version: 55.0.13(expo@54.0.33)
     devDependencies:
