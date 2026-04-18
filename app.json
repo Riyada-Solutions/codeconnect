@@ -17,7 +17,6 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.codeconnect",
       "buildNumber": "1",
-      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Allow CodeConnect to sign you in with Face ID.",
         "ITSAppUsesNonExemptEncryption": false
@@ -25,7 +24,6 @@
     },
     "android": {
       "package": "com.codeconnect",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ic_launcher.png",
         "backgroundColor": "#2daaae"
@@ -44,17 +42,7 @@
         }
       ],
       "expo-font",
-      "expo-web-browser",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
-      ]
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
